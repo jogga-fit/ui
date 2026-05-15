@@ -1,0 +1,9 @@
+pub mod clubs;
+pub mod feed;
+pub mod login;
+pub mod people;
+pub mod post;
+pub mod profile;
+pub mod register;
+pub mod reset_password;
+pub mod settings;
