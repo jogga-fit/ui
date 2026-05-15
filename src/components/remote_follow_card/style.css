@@ -1,0 +1,192 @@
+.remote-follow-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+}
+
+.remote-follow-header {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.remote-follow-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: color-mix(in srgb, var(--primary) 14%, transparent);
+    color: var(--primary);
+    font-size: 1rem;
+}
+
+.remote-follow-title {
+    margin: 0;
+    min-width: 0;
+    flex: 1;
+    color: var(--text);
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.remote-follow-help {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.remote-follow-help-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: help;
+    font-size: 0.95rem;
+}
+
+.remote-follow-help-btn:hover,
+.remote-follow-help:focus-within .remote-follow-help-btn {
+    border-color: color-mix(in srgb, var(--primary) 54%, var(--border) 46%);
+    color: var(--primary);
+}
+
+.remote-follow-tooltip {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 30;
+    width: min(300px, calc(100vw - 40px));
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+    box-shadow: var(--shadow);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    line-height: 1.45;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-2px);
+    transition: opacity 0.12s, transform 0.12s;
+}
+
+.remote-follow-help:hover .remote-follow-tooltip,
+.remote-follow-help:focus-within .remote-follow-tooltip {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.remote-follow-tooltip p {
+    margin: 0;
+}
+
+.remote-follow-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+}
+
+.remote-follow-input {
+    width: 100%;
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    outline: 0;
+    padding: 9px 11px;
+    background: var(--bg-input);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.92rem;
+}
+
+.remote-follow-input:focus {
+    border-color: var(--primary);
+}
+
+.remote-follow-input::placeholder {
+    color: color-mix(in srgb, var(--text-muted) 78%, transparent);
+}
+
+.remote-follow-submit {
+    min-height: 39px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 13px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: var(--primary);
+    color: #fff;
+    font: inherit;
+    font-size: 0.84rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, opacity 0.15s;
+}
+
+.remote-follow-submit:hover:not(:disabled) {
+    background: var(--primary-h);
+}
+
+.remote-follow-submit:disabled {
+    opacity: 0.48;
+    cursor: not-allowed;
+}
+
+.remote-follow-submit i {
+    font-size: 1rem;
+}
+
+.remote-follow-examples {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-top: 7px;
+}
+
+.remote-follow-examples code {
+    padding: 2px 5px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background: var(--bg-input);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+}
+
+.remote-follow-success {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: fit-content;
+    color: var(--success);
+    font-size: 0.82rem;
+    font-weight: 650;
+}
+
+@media (max-width: 520px) {
+    .remote-follow-form {
+        grid-template-columns: 1fr;
+    }
+
+    .remote-follow-submit {
+        width: 100%;
+    }
+}

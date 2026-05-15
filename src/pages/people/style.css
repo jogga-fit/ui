@@ -1,0 +1,171 @@
+.connections-card {
+    padding: 0;
+    overflow: hidden;
+}
+
+.connections-card .modal-header {
+    padding: 0;
+}
+
+.connections-card .modal-tab {
+    padding: 14px 20px;
+    font-size: 0.82rem;
+    gap: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.connections-list {
+    padding: 4px 0;
+    min-height: 64px;
+}
+
+.connections-list .follow-list-item {
+    padding: 10px 16px;
+}
+
+.connections-list .follow-list-identity {
+    padding: 6px 8px;
+    border-radius: var(--radius-sm);
+    transition: background 0.12s;
+}
+.connections-list
+    .follow-list-identity:not(.follow-list-identity-remote):hover {
+    background: rgba(255, 107, 43, 0.07);
+}
+
+/* count badge inside tabs */
+.tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 18px;
+    padding: 0 6px;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1;
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.45);
+    transition:
+        background 0.12s,
+        color 0.12s;
+}
+
+.modal-tab-active .tab-count {
+    background: rgba(193, 68, 14, 0.28);
+    color: var(--primary);
+}
+
+.tab-count-accent {
+    background: rgba(193, 68, 14, 0.28) !important;
+    color: var(--primary) !important;
+}
+
+.follow-list-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+}
+.follow-list-item:last-child {
+    border-bottom: none;
+}
+.follow-list-identity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    padding: 2px 4px;
+    margin: -2px -4px;
+    transition: background 0.12s;
+}
+.follow-list-identity:hover {
+    background: rgba(255, 107, 43, 0.07);
+}
+
+.connection-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 1px;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.connection-name {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    color: var(--text);
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.connection-handle {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* remote actors: no pointer, no hover */
+.follow-list-identity-remote {
+    cursor: default;
+}
+.follow-list-identity-remote:hover {
+    background: none;
+}
+
+.follow-badge {
+    flex-shrink: 0;
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 999px;
+    letter-spacing: 0.03em;
+}
+.follow-badge-pending {
+    background: rgba(193, 68, 14, 0.15);
+    color: var(--primary);
+    border: 1px solid rgba(193, 68, 14, 0.3);
+}
+
+.pending-actions {
+    display: flex;
+    gap: 0.4rem;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.unfollow-btn,
+.remove-follower-btn {
+    margin-left: auto;
+    flex-shrink: 0;
+    opacity: 0.75;
+    transition:
+        opacity 0.15s,
+        color 0.15s,
+        border-color 0.15s;
+}
+
+.unfollow-btn:hover,
+.remove-follower-btn:hover {
+    opacity: 1;
+    color: var(--error);
+    border-color: var(--error);
+}

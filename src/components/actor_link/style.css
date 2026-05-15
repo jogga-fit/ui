@@ -1,0 +1,57 @@
+.feed-avatar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    min-width: 0;
+}
+
+a.feed-actor-link {
+    text-decoration: none;
+    color: inherit;
+    border-radius: 6px;
+    padding: 2px 4px;
+    margin: -2px -4px;
+    transition: background 0.15s;
+}
+
+a.feed-actor-link:hover {
+    background: var(--hover-bg, rgba(0, 0, 0, 0.06));
+}
+
+.feed-username {
+    color: var(--text);
+    font-size: 0.9rem;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.feed-via-club {
+    color: var(--muted);
+    font-weight: 400;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.feed-via-club i {
+    padding: 0 3px;
+    font-size: 0.75em;
+    opacity: 0.7;
+}
+
+.feed-club-link {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.feed-club-link:hover {
+    text-decoration: underline;
+}

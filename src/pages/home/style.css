@@ -1,0 +1,392 @@
+:global(.compose-card) {
+    padding: 0;
+    overflow: visible;
+}
+
+.compose-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+}
+
+.compose-tab {
+    flex: 1;
+    padding: 12px 8px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.compose-tab:hover {
+    color: var(--text);
+}
+
+.compose-tab-active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+.compose-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.compose-input-line {
+    padding: 8px 12px;
+    font-size: 0.92rem;
+}
+
+.compose-input {
+    width: 100%;
+    resize: vertical;
+    min-height: 80px;
+}
+
+.note-compose-wrap {
+    display: flex;
+    flex-direction: column;
+}
+
+.note-compose-input {
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    border-bottom: none;
+    min-height: 100px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 0;
+}
+
+.note-compose-wrap:focus-within .note-compose-input,
+.note-compose-wrap:focus-within .note-image-strip,
+.note-compose-wrap:focus-within .note-compose-footer,
+:global(.note-compose-wrap):focus-within :global(.activity-title-input) {
+    border-color: var(--primary);
+}
+
+:global(.activity-title-input) {
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+:global(.activity-title-input)::placeholder {
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.activity-desc-input {
+    border-top: none !important;
+    border-radius: 0 !important;
+    min-height: 80px !important;
+}
+
+.note-image-strip {
+    display: flex;
+    gap: 6px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 6px 10px;
+    background: var(--bg-input);
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+}
+
+.note-thumb {
+    width: 56px;
+    height: 56px;
+}
+
+.note-compose-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 7px 10px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+}
+
+.note-compose-footer-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.note-compose-footer-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.note-attach-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+}
+
+.note-attach-btn:hover {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.compose-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.char-count {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.activity-device {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin: -6px 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.activity-type-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.activity-type-picker label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.activity-type-select {
+    font-weight: 500;
+}
+
+.file-drop-zone {
+    display: block;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.file-drop-zone:hover {
+    border-color: var(--primary);
+    background: rgba(193, 68, 14, 0.04);
+}
+
+.file-prompt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 24px 16px;
+}
+
+.file-icon-lg {
+    font-size: 2rem;
+    opacity: 0.7;
+}
+
+.file-prompt-text {
+    font-size: 0.9rem;
+    color: var(--text);
+    text-align: center;
+}
+
+.file-hint {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+.file-selected {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+}
+
+.file-icon {
+    font-size: 1.4rem;
+}
+
+.file-name {
+    flex: 1;
+    font-size: 0.88rem;
+    color: var(--primary);
+    word-break: break-all;
+}
+
+.file-remove {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.file-remove:hover {
+    color: var(--error);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.visibility-select {
+    padding: 8px 12px;
+    font-size: 0.88rem;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    cursor: pointer;
+    width: auto;
+    min-width: 140px;
+}
+
+.visibility-select:focus {
+    border-color: var(--primary);
+}
+
+.compose-coming-soon {
+    align-items: center;
+    text-align: center;
+    padding: 32px 20px;
+    gap: 10px;
+}
+
+.coming-soon-icon {
+    font-size: 2.5rem;
+    opacity: 0.5;
+}
+
+.coming-soon-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.coming-soon-body {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    max-width: 360px;
+    line-height: 1.6;
+}
+
+:global(.feed) {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.compose-image-strip {
+    display: flex;
+    gap: 8px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 6px 0 4px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+}
+
+.compose-thumb-wrap {
+    position: relative;
+    flex-shrink: 0;
+    width: 72px;
+    height: 72px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+}
+
+.compose-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.compose-thumb-loading {
+    width: 72px;
+    height: 72px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg-input);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.loading-spinner-sm {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.compose-add-photo {
+    flex-shrink: 0;
+    width: 72px;
+    height: 72px;
+    border-radius: var(--radius-sm);
+    border: 1px dashed var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 1.4rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.compose-add-photo:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}

@@ -1,0 +1,27 @@
+.route-map {
+    margin-bottom: 10px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.route-map-placeholder {
+    height: 8px;
+}
+
+.elevation-sparkline {
+    display: block;
+    width: 100%;
+    height: 40px;
+    margin-top: 4px;
+}
+
+.sparkline-fill {
+    fill: var(--primary);
+    opacity: 0.2;
+}
+
+.sparkline-line {
+    stroke: var(--primary);
+    stroke-width: 1.5;
+}

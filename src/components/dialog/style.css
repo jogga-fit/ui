@@ -1,0 +1,109 @@
+/* Dialog Backdrop */
+.dx-dialog-backdrop {
+  position: fixed;
+  z-index: 9001;
+  background: rgba(0, 0, 0, 0.6);
+  inset: 0;
+  opacity: 0;
+  will-change: transform, opacity;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.dx-dialog-backdrop[data-state="closed"] {
+  animation: dx-dialog-backdrop-animate-out 150ms ease-in forwards;
+  pointer-events: none;
+}
+
+@keyframes dx-dialog-backdrop-animate-out {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.95) translateY(-2px);
+  }
+}
+
+.dx-dialog-backdrop[data-state="open"] {
+  animation: dx-dialog-content-animate-in 150ms ease-out forwards;
+}
+
+@keyframes dx-dialog-content-animate-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(-2px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Dialog Container */
+.dx-dialog {
+  position: relative;
+  z-index: 9002;
+  display: flex;
+  width: 100%;
+  max-width: calc(100% - 2rem);
+  box-sizing: border-box;
+  flex-direction: column;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius, 12px);
+  background: var(--bg-card);
+  box-shadow: var(--shadow);
+  color: var(--text);
+  font-family: var(--font);
+  gap: 16px;
+}
+
+@media (width >= 40rem) {
+  .dx-dialog {
+    max-width: 32rem;
+  }
+}
+
+.dx-dialog-title {
+  margin: 0;
+  color: var(--text);
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-family: var(--font);
+}
+
+.dx-dialog-description {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-family: var(--font);
+}
+
+.dx-dialog-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  align-self: flex-start;
+  padding: 4px;
+  border: none;
+  margin: 0;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  border-radius: var(--radius-sm, 6px);
+  transition: color 150ms ease, background-color 150ms ease;
+}
+
+.dx-dialog-close:hover {
+  color: var(--text);
+  background-color: var(--bg-input);
+}

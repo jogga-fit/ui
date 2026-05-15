@@ -1,0 +1,127 @@
+.cm-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.72);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(6px);
+}
+
+.cm-modal {
+    background: #15181c;
+    border-radius: 16px;
+    width: min(540px, calc(100vw - 32px));
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.9);
+}
+
+.cm-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cm-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.cm-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 6px 14px;
+    border-radius: 20px;
+    line-height: 1;
+    transition: background 0.12s;
+}
+
+.cm-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.cm-btn-apply {
+    background: #fff;
+    color: #000;
+    font-weight: 700;
+    padding: 8px 22px;
+}
+
+.cm-btn-apply:hover {
+    background: rgba(255, 255, 255, 0.88);
+}
+
+.cm-btn-apply:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.cm-stage {
+    position: relative;
+    overflow: hidden;
+    background: #000;
+    cursor: grab;
+    user-select: none;
+}
+
+.cm-stage:active {
+    cursor: grabbing;
+}
+
+.cm-img {
+    position: absolute;
+    transform-origin: 0 0;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.cm-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+.cm-zoom-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    background: #15181c;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cm-zoom-icon {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1;
+    width: 16px;
+    text-align: center;
+}
+
+.cm-zoom-slider {
+    flex: 1;
+    accent-color: #1d9bf0;
+    height: 4px;
+    cursor: pointer;
+}
+
+.cm-footer {
+    padding: 12px 16px;
+    background: #15181c;
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}

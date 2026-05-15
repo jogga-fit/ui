@@ -1,0 +1,20 @@
+:global(.empty-state) {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text-muted);
+}
+
+:global(.empty-icon) {
+    font-size: 3rem;
+    margin-bottom: 16px;
+}
+
+:global(.empty-state) h3 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: var(--text);
+}
+
+:global(.empty-state) p {
+    font-size: 0.9rem;
+}

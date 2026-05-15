@@ -1,0 +1,45 @@
+.dx-badge {
+  display: inline-flex;
+  min-width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full, 9999px);
+  font-size: 12px;
+  font-family: var(--font);
+  font-weight: 500;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.dx-badge[padding="true"] {
+  padding: 0 8px;
+}
+
+/* Primary — uses the accent color tint (like our exercise type badge) */
+.dx-badge[data-style="primary"] {
+  background-color: rgba(193, 68, 14, 0.15);
+  color: var(--primary);
+  border: 1px solid rgba(193, 68, 14, 0.25);
+}
+
+/* Secondary — muted background */
+.dx-badge[data-style="secondary"] {
+  background-color: var(--bg-input);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+/* Outline */
+.dx-badge[data-style="outline"] {
+  background-color: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+/* Destructive */
+.dx-badge[data-style="destructive"] {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: var(--error);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}

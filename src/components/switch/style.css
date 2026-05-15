@@ -1,0 +1,38 @@
+.dx-switch {
+  all: unset;
+  position: relative;
+  width: 2rem;
+  height: 1.15rem;
+  border-radius: var(--radius-full, 9999px);
+  background-color: var(--bg-input);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: background-color 200ms ease;
+  flex-shrink: 0;
+}
+
+.dx-switch[data-state="checked"] {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+.dx-switch-thumb {
+  display: block;
+  width: calc(1.15rem - 6px);
+  height: calc(1.15rem - 6px);
+  border-radius: var(--radius-full, 9999px);
+  background-color: var(--text);
+  transform: translateX(2px);
+  transition: transform 200ms ease;
+  will-change: transform;
+}
+
+.dx-switch[data-state="checked"] .dx-switch-thumb {
+  background-color: #fff;
+  transform: translateX(calc(2rem - 4px - (1.15rem - 6px)));
+}
+
+.dx-switch[data-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
