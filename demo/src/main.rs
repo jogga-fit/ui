@@ -11,7 +11,7 @@ use jogga_ui::{
     components::{
         actor_link::ActorLink,
         auth_card::AuthCard,
-        avatar::Avatar,
+        avatar::{Avatar, AvatarSize},
         badge::{Badge, BadgeVariant, VerifiedIcon},
         empty_state::EmptyState,
         error_banner::ErrorBanner,
@@ -318,10 +318,10 @@ fn DemoPage() -> Element {
 
             Section { title: "Avatar",
                 div { class: "demo-row demo-row-gap",
-                    Avatar { url: None, name: "Alex Runner".to_string() }
-                    Avatar { url: None, name: "Sam Cyclist".to_string(), size: "48px".to_string() }
-                    Avatar { url: None, name: "Maya Swimmer".to_string(), size: "64px".to_string() }
-                    Avatar { url: Some("https://i.pravatar.cc/80?img=5".to_string()), name: "With photo".to_string(), size: "48px".to_string() }
+                    Avatar { url: None, name: "Sam Cyclist".to_string() }
+                    Avatar { url: None, name: "Maya Swimmer".to_string(), size: AvatarSize::Medium }
+                    Avatar { url: None, name: "Lara Runner".to_string(), size: AvatarSize::Large }
+                    Avatar { url: Some("https://i.pravatar.cc/80?img=5".to_string()), name: "With photo".to_string(), size: AvatarSize::Medium }
                 }
             }
 

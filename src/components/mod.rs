@@ -23,4 +23,3 @@ pub mod stat_toggle_chips;
 pub mod switch;
 pub mod tab_bar;
 pub mod theme_card;
-pub mod toast;

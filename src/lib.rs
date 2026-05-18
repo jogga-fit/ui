@@ -52,6 +52,5 @@ pub fn UiStyles() -> dioxus::prelude::Element {
         document::Link { rel: "stylesheet", href: asset!("/src/components/skeleton/style.css", AssetOptions::css_module()) }
         document::Link { rel: "stylesheet", href: asset!("/src/components/stat_toggle_chips/style.css", AssetOptions::css_module()) }
         document::Link { rel: "stylesheet", href: asset!("/src/components/switch/style.css", AssetOptions::css_module()) }
-        document::Link { rel: "stylesheet", href: asset!("/src/components/toast/style.css", AssetOptions::css_module()) }
     }
 }
