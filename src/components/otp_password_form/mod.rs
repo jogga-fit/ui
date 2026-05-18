@@ -2,7 +2,7 @@
 
 use dioxus::prelude::*;
 
-#[css_module("/src/components/otp_password_form.css")]
+#[css_module("/src/components/otp_password_form/style.css")]
 struct Styles;
 
 #[derive(Clone, PartialEq)]
@@ -23,10 +23,21 @@ pub fn OtpPasswordForm(
     password_label: String,
     password2_label: String,
     #[props(optional)] on_resend: Option<EventHandler<()>>,
+    /// If provided, called with the OTP code when "Verify code" is clicked.
+    /// The parent is responsible for setting `otp_pre_verified = true` on success.
+    /// Without this prop the form advances the phase immediately (old behaviour).
+    #[props(optional)]
+    on_verify_otp: Option<EventHandler<String>>,
+    /// Error to display in the Enter phase (e.g. wrong code from server).
+    #[props(optional)]
+    otp_verify_error: Option<String>,
+    /// When true the form skips the Enter phase and shows the password fields.
+    #[props(default)]
+    otp_pre_verified: bool,
 ) -> Element {
     let mut phase = use_signal(|| OtpPhase::Enter);
     let otp_len = otp.read().len();
-    let in_enter_phase = *phase.read() == OtpPhase::Enter;
+    let in_enter_phase = !otp_pre_verified && *phase.read() == OtpPhase::Enter;
 
     rsx! {
         if in_enter_phase {
@@ -41,11 +52,8 @@ pub fn OtpPasswordForm(
                             for i in 0..6usize {
                                 div {
                                     key: "{i}",
-                                    class: if i == active_idx && !is_full {
-                                        format!("{} {}", Styles::otp_cell, Styles::otp_cell_active)
-                                    } else {
-                                        Styles::otp_cell.to_string()
-                                    },
+                                    class: "{Styles::otp_cell}",
+                                    class: if i == active_idx && !is_full { "{Styles::otp_cell_active}" },
                                     { otp.read().chars().nth(i).map(|c| c.to_string()).unwrap_or_default() }
                                 }
                             }
@@ -70,6 +78,9 @@ pub fn OtpPasswordForm(
                     }
                 }
             }
+            if let Some(err) = otp_verify_error {
+                div { class: "error-banner", "{err}" }
+            }
         }
 
         if in_enter_phase {
@@ -85,7 +96,13 @@ pub fn OtpPasswordForm(
             button {
                 class: "btn btn-primary btn-full",
                 disabled: otp_len < 6,
-                onclick: move |_| phase.set(OtpPhase::SetPassword),
+                onclick: move |_| {
+                    if let Some(verify) = on_verify_otp.as_ref() {
+                        verify.call(otp.read().clone());
+                    } else {
+                        phase.set(OtpPhase::SetPassword);
+                    }
+                },
                 "Verify code"
             }
         } else {

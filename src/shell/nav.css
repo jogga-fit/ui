@@ -1,0 +1,131 @@
+.sheet-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 298;
+}
+
+.sheet {
+    display: none;
+    position: fixed;
+    bottom: var(--nav-h, 60px);
+    left: 0;
+    right: 0;
+    max-height: 60vh;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border);
+    border-radius: var(--radius) var(--radius) 0 0;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.5);
+    z-index: 299;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.sheet-handle {
+    width: 40px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    margin: 10px auto 4px;
+    flex-shrink: 0;
+}
+
+.account-sheet-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.account-sheet-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-full);
+    background: var(--primary);
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.account-sheet-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.account-sheet-handle {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.account-sheet-nav {
+    padding: 8px 0 16px;
+}
+
+.account-sheet-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 16px;
+    cursor: pointer;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-family: var(--font);
+    transition: background 0.1s;
+}
+
+.account-sheet-item:hover,
+.account-sheet-item_active {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.account-sheet-item i {
+    font-size: 20px;
+    color: var(--text-muted);
+    width: 24px;
+    flex-shrink: 0;
+}
+
+.sheet-arrow {
+    margin-left: auto;
+    font-size: 16px;
+    color: var(--text-muted) !important;
+    width: auto !important;
+}
+
+.account-sheet-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 2px 16px;
+}
+
+.account-sheet-signout {
+    color: var(--error) !important;
+}
+
+.account-sheet-signout i {
+    color: var(--error) !important;
+}
+
+@media (max-width: 767px) {
+    .sheet-backdrop {
+        display: block;
+    }
+
+    .sheet {
+        display: flex;
+    }
+}

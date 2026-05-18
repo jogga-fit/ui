@@ -10,6 +10,7 @@ pub mod exercise_stats_grid;
 pub mod feed_gate;
 pub mod like_button;
 pub mod media_carousel;
+pub mod notifications;
 pub mod otp_password_form;
 pub mod person_row;
 pub mod post;

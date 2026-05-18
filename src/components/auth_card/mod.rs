@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 
 use crate::components::error_banner::ErrorBanner;
 
-#[css_module("/src/components/auth_card.css")]
+#[css_module("/src/components/auth_card/style.css")]
 struct Styles;
 
 #[component]
@@ -15,8 +15,8 @@ pub fn AuthCard(
     children: Element,
 ) -> Element {
     rsx! {
-        div { class: Styles::auth_page,
-            div { class: Styles::auth_card,
+        div { class: Styles::auth_page, "data-testid": "auth-page",
+            div { class: Styles::auth_card, "data-testid": "auth-card",
                 div { class: Styles::auth_header,
                     div { class: Styles::auth_logo, i { class: "ph ph-person-simple-run" } }
                     h1 { "Jogga" }

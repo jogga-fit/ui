@@ -2,7 +2,7 @@
 
 use dioxus::prelude::*;
 
-#[css_module("/src/components/theme_card.css")]
+#[css_module("/src/components/theme_card/style.css")]
 struct Styles;
 
 #[component]
@@ -16,11 +16,8 @@ pub fn ThemeCard(
 ) -> Element {
     rsx! {
         button {
-            class: if active {
-                format!("{} {}", Styles::theme_card, Styles::theme_card_active)
-            } else {
-                Styles::theme_card.to_string()
-            },
+            class: "{Styles::theme_card}",
+            class: if active { "{Styles::theme_card_active}" },
             "data-testid": "theme-option-{id}",
             "aria-pressed": if active { "true" } else { "false" },
             disabled,

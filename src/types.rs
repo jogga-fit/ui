@@ -179,22 +179,6 @@ pub struct FeedItem {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
-pub struct NotificationItem {
-    pub id: String,
-    /// "follow_request" | "new_follower" | "follow_accepted" | "like"
-    pub kind: String,
-    pub from_ap_id: String,
-    pub from_username: String,
-    pub from_display_name: Option<String>,
-    pub from_avatar_url: Option<String>,
-    /// Populated for "like" notifications.
-    pub object_ap_id: Option<String>,
-    pub object_title: Option<String>,
-    pub is_read: bool,
-    pub created_at: String,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct ThreadItem {
     pub ap_id: String,
     pub author_username: String,
