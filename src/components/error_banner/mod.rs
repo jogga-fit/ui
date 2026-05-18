@@ -6,6 +6,6 @@ struct Styles;
 #[component]
 pub fn ErrorBanner(message: String) -> Element {
     rsx! {
-        div { class: "error-banner {Styles::error_banner}", "{message}" }
+        div { class: Styles::error_banner, "{message}" }
     }
 }

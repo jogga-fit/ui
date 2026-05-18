@@ -3,15 +3,22 @@ use dioxus::prelude::*;
 #[css_module("/src/components/avatar/style.css")]
 struct Styles;
 
+#[derive(Clone, Default, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum AvatarSize {
+    #[default]
+    Small,
+    Medium,
+    Large,
+}
+
 #[component]
-pub fn Avatar(url: Option<String>, name: String, #[props(default)] size: String) -> Element {
-    let size_classes = match size.as_str() {
-        "" => String::new(),
-        "avatar-sm" => format!(" avatar-sm {}", Styles::avatar_sm),
-        "avatar-lg" => format!(" avatar-lg {}", Styles::avatar_lg),
-        other => format!(" {other}"),
+pub fn Avatar(url: Option<String>, name: String, #[props(default)] size: AvatarSize) -> Element {
+    let size_class = match size {
+        AvatarSize::Small => Styles::avatar_sm,
+        AvatarSize::Medium => Styles::avatar_md,
+        AvatarSize::Large => Styles::avatar_lg,
     };
-    let avatar_class = format!("{} avatar{size_classes}", Styles::avatar);
     let initial = name
         .chars()
         .next()
@@ -22,12 +29,12 @@ pub fn Avatar(url: Option<String>, name: String, #[props(default)] size: String)
     rsx! {
         if let Some(url) = url {
             img {
-                class: format!("{avatar_class} {} avatar-img", Styles::avatar_img),
+                class: "{Styles::avatar} {size_class} {Styles::avatar_img}",
                 src: "{url}",
                 alt: "{name}",
             }
         } else {
-            div { class: avatar_class, "{initial}" }
+            div { class: "{Styles::avatar} {size_class}", "{initial}" }
         }
     }
 }

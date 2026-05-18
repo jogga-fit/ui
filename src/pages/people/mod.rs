@@ -3,7 +3,11 @@ use dioxus::prelude::*;
 use crate::{
     AcceptFollowRequestFn, FollowArgs, FollowPersonFn, FollowRequestArgs, KickFollowerArgs,
     KickFollowerFn, RejectFollowRequestFn, TokenApIdArgs, UnfollowActorFn,
-    components::{avatar::Avatar, person_row::PersonRow, remote_follow_card::RemoteFollowCard},
+    components::{
+        avatar::{Avatar, AvatarSize},
+        person_row::PersonRow,
+        remote_follow_card::RemoteFollowCard,
+    },
     types::{DirectoryItem, FollowerItem, FollowingItem, sleep_ms},
 };
 
@@ -194,7 +198,7 @@ fn FollowingTab(
                                 nav.push(format!("/@{username_nav}"));
                             }
                         },
-                        Avatar { url: avatar, name: display.clone(), size: "avatar-sm" }
+                        Avatar { url: avatar, name: display.clone(), size: AvatarSize::Small }
                         div { class: Styles::connection_info,
                             span { class: Styles::connection_name, "{display}" }
                             span { class: Styles::connection_handle, "{handle}" }
@@ -276,7 +280,7 @@ fn FollowersTab(
                                 nav.push(format!("/@{username_nav}"));
                             }
                         },
-                        Avatar { url: avatar, name: display.clone(), size: "avatar-sm" }
+                        Avatar { url: avatar, name: display.clone(), size: AvatarSize::Small }
                         div { class: Styles::connection_info,
                             span { class: Styles::connection_name, "{display}" }
                             span { class: Styles::connection_handle, "{handle}" }
@@ -341,7 +345,7 @@ fn RequestsTab(
                                 nav.push(format!("/@{username_nav}"));
                             }
                         },
-                        Avatar { url: avatar, name: display.clone(), size: "avatar-sm" }
+                        Avatar { url: avatar, name: display.clone(), size: AvatarSize::Small }
                         div { class: Styles::connection_info,
                             span { class: Styles::connection_name, "{display}" }
                             span { class: Styles::connection_handle, "{handle}" }

@@ -57,19 +57,10 @@ pub fn LikeButton(
         });
     };
 
-    let heart_class = if *liked.read() {
-        format!(
-            "{} like-btn {} like-btn-active",
-            Styles::like_btn,
-            Styles::like_btn_active
-        )
-    } else {
-        format!("{} like-btn", Styles::like_btn)
-    };
-
     rsx! {
         button {
-            class: heart_class,
+            class: "{Styles::like_btn}",
+            class: if *liked.read() { "{Styles::like_btn_active}" },
             disabled: token_signal.read().is_none() || *liking.read(),
             onclick: toggle_like,
             title: if *liked.read() { "Unlike" } else { "Like" },
@@ -80,7 +71,7 @@ pub fn LikeButton(
                 i { class: format!("ph ph-heart {}", Styles::like_heart) }
             }
             if *like_count.read() > 0 {
-                span { class: "{Styles::like_count} like-count", "{like_count}" }
+                span { class: Styles::like_count, "{like_count}" }
             }
         }
     }

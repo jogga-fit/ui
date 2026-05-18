@@ -198,7 +198,7 @@ fn ElevationSparkline(coords: Vec<(f64, f64, Option<f64>)>) -> Element {
     let fill_pts = format!("{pts} {last_x},40 {first_x},40");
     rsx! {
         svg {
-            class: "{Styles::elevation_sparkline} elevation-sparkline",
+            class: Styles::elevation_sparkline,
             view_box: "0 0 200 40",
             preserve_aspect_ratio: "none",
             xmlns: "http://www.w3.org/2000/svg",
@@ -255,7 +255,7 @@ fn RouteMapInner(
     };
 
     rsx! {
-        div { class: "{Styles::route_map} route-map",
+        div { class: Styles::route_map, "data-testid": "route-map",
             if ready() {
                 Map {
                     initial_position: center,

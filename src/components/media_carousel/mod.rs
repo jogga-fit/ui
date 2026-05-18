@@ -356,11 +356,8 @@ pub fn CarouselOverlay(
                         {(0..slide_count).map(|i| rsx! {
                             button {
                                 key: "{i}",
-                                class: if i == idx {
-                                    format!("{} {}", Styles::carousel_dot, Styles::carousel_dot_active)
-                                } else {
-                                    Styles::carousel_dot.to_string()
-                                },
+                                class: "{Styles::carousel_dot}",
+                                class: if i == idx { "{Styles::carousel_dot_active}" },
                                 onclick: move |_| current.set(i),
                                 aria_label: "Slide {i + 1}",
                             }
@@ -434,11 +431,8 @@ fn ImageLightbox(urls: Vec<String>, initial_index: usize, on_close: EventHandler
                         {(0..count).map(|i| rsx! {
                             button {
                                 key: "{i}",
-                                class: if i == idx {
-                                    format!("{} {}", Styles::carousel_dot, Styles::carousel_dot_active)
-                                } else {
-                                    Styles::carousel_dot.to_string()
-                                },
+                                class: "{Styles::carousel_dot}",
+                                class: if i == idx { "{Styles::carousel_dot_active}" },
                                 onclick: move |_| current.set(i),
                                 aria_label: "Slide {i + 1}",
                             }

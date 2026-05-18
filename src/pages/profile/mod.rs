@@ -10,6 +10,7 @@ use crate::{
     UpdateProfileArgs, UpdateProfileFn, UploadAvatarArgs, UploadAvatarFn,
     browser::copy_to_clipboard,
     components::{
+        avatar::{Avatar, AvatarSize},
         crop_modal::{CropModal, CropModalState},
         error_banner::ErrorBanner,
         post::FeedCard,
@@ -607,11 +608,6 @@ fn ConnectionsModal(
                                             } else {
                                                 format!("@{uname}@{domain}")
                                             };
-                                            let initial = item.username
-                                                .chars()
-                                                .next()
-                                                .map(|c| c.to_uppercase().to_string())
-                                                .unwrap_or_else(|| "?".into());
                                             let display = item.display_name
                                                 .clone()
                                                 .unwrap_or_else(|| item.username.clone());
@@ -632,7 +628,7 @@ fn ConnectionsModal(
                                                             nav2.push(format!("/{h}"));
                                                         }
                                                     },
-                                                    div { class: "avatar avatar-sm", "{initial}" }
+                                                    Avatar { size: AvatarSize::Small, url: None, name: display.clone() },
                                                     div { class: "connection-info",
                                                         span { class: "connection-name", "{display}" }
                                                         span { class: "connection-handle", "{handle}" }

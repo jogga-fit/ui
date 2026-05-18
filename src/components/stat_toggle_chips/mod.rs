@@ -54,11 +54,8 @@ pub fn StatToggleChips(
                         button {
                             key: "{k2}",
                             r#type: "button",
-                            class: if hidden_stats.read().contains(&k) {
-                                format!("{} {}", Styles::type_chip, Styles::type_chip_active)
-                            } else {
-                                Styles::type_chip.to_string()
-                            },
+                            class: "{Styles::type_chip}",
+                            class: if hidden_stats.read().contains(&k) { "{Styles::type_chip_active}" },
                             onclick: move |_| {
                                 let mut hs = hidden_stats.write();
                                 if hs.contains(&k2) {

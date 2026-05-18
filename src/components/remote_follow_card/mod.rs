@@ -25,7 +25,7 @@ pub fn RemoteFollowCard(
     on_submit: EventHandler<()>,
 ) -> Element {
     rsx! {
-        div { class: Styles::remote_follow_card,
+        div { class: "{Styles::remote_follow_card} follow-card",
             div { class: Styles::remote_follow_header,
                 div { class: Styles::remote_follow_icon,
                     i { class: "{icon_class}" }
@@ -54,7 +54,7 @@ pub fn RemoteFollowCard(
 
             div { class: Styles::remote_follow_form,
                 input {
-                    class: Styles::remote_follow_input,
+                    class: "{Styles::remote_follow_input} follow-input",
                     r#type: "text",
                     aria_label: "{input_label}",
                     placeholder: "{placeholder}",

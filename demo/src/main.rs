@@ -25,7 +25,6 @@ use jogga_ui::{
         skeleton::Skeleton,
         stat_toggle_chips::{STAT_TOGGLES, StatToggleChips},
         switch::{Switch, SwitchThumb},
-        toast::ToastProvider,
     },
     pages::MigrationModal,
     types::{AuthSignal, AuthUser, MigrationModalSignal, ThemeSignal},
@@ -169,17 +168,15 @@ fn App() -> Element {
     rsx! {
         UiStyles {}
         document::Link { rel: "stylesheet", href: asset!("/assets/demo.css") }
-        ToastProvider {
-            DemoPageNav {}
-            Router::<Route> {}
-            if let Some(profile) = migration_modal.read().clone() {
-                MigrationModal {
-                    profile,
-                    on_close: move |_| migration_modal.clone().set(None),
-                    add_alias_fn: AddAliasFn(mock_add_alias),
-                    remove_alias_fn: RemoveAliasFn(mock_remove_alias),
-                    move_account_fn: MoveAccountFn(mock_move_account),
-                }
+        DemoPageNav {}
+        Router::<Route> {}
+        if let Some(profile) = migration_modal.read().clone() {
+            MigrationModal {
+                profile,
+                on_close: move |_| migration_modal.clone().set(None),
+                add_alias_fn: AddAliasFn(mock_add_alias),
+                remove_alias_fn: RemoveAliasFn(mock_remove_alias),
+                move_account_fn: MoveAccountFn(mock_move_account),
             }
         }
     }

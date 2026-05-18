@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 
-use crate::components::avatar::Avatar;
+use crate::components::avatar::{Avatar, AvatarSize};
 
 #[css_module("/src/components/person_row/style.css")]
 struct Styles;
@@ -25,12 +25,9 @@ pub fn PersonRow(
     rsx! {
         div { class: Styles::person_row,
             div {
-                class: if is_local {
-                    Styles::person_row_identity.to_string()
-                } else {
-                    format!("{} {}", Styles::person_row_identity, Styles::person_row_identity_remote)
-                },
-                Avatar { url: avatar_url, name: name.clone(), size: "36px" }
+                class: "{Styles::person_row_identity}",
+                class: if !is_local { "{Styles::person_row_identity_remote}" },
+                Avatar { url: avatar_url, name: name.clone(), size: AvatarSize::Small }
                 div { class: Styles::person_row_info,
                     span { class: Styles::person_row_name, "{name}" }
                     span { class: Styles::person_row_handle, "{handle}" }

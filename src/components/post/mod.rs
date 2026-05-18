@@ -45,7 +45,7 @@ pub fn PostCardHeader(
     };
     rsx! {
         div { class: "{class}",
-            div { class: "feed-actor-col",
+            div { class: Styles::feed_actor_col,
                 ActorLink {
                     is_local: actor_is_local,
                     ap_id: actor_ap_id.clone(),
@@ -58,12 +58,12 @@ pub fn PostCardHeader(
                     via_club_display: via_club_display.clone(),
                     stop_propagation,
                 }
-                span { class: "post-type-badge",
+                span { class: Styles::post_type_badge,
                     i { class: "ph {post_icon}" }
                     span { "{post_label}" }
                 }
             }
-            span { class: "post-time", "{published}" }
+            span { class: Styles::post_time, "{published}" }
             if show_menu {
                 PostMenu {
                     deleting,
