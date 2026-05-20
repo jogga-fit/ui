@@ -265,11 +265,15 @@
                         overlay.remove();
                     }, { once: true });
                 }
-                if (document.body.hasAttribute('data-hydrated')) { dismiss(); return; }
+                function onHydrated() {
+                    var t = setTimeout(dismiss, 2000);
+                    document.fonts.ready.then(function () { clearTimeout(t); dismiss(); });
+                }
+                if (document.body.hasAttribute('data-hydrated')) { onHydrated(); return; }
                 var observer = new MutationObserver(function () {
                     if (document.body.hasAttribute('data-hydrated')) {
                         observer.disconnect();
-                        dismiss();
+                        onHydrated();
                     }
                 });
                 observer.observe(document.body, { attributes: true, attributeFilter: ['data-hydrated'] });
