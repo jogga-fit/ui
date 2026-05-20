@@ -8,6 +8,7 @@ pub mod format;
 pub mod hooks;
 pub mod image;
 pub mod pages;
+pub mod shell;
 pub mod types;
 
 pub use fns::*;

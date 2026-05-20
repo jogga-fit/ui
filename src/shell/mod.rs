@@ -9,9 +9,8 @@ pub struct Styles;
 use nav::{AccountSheetLink, Brand, NavLinkVariant, NavStyles, ShellNavLink, class_with_active};
 pub use types::{AppShellNavItem, AppShellNavPlacement, AppShellUser};
 
-use crate::{
-    components::notifications::{NotificationList, Styles as NotificationStyles},
-    types::NotificationItem,
+use crate::components::notifications::{
+    NotificationItem, NotificationList, Styles as NotificationStyles,
 };
 
 #[component]
