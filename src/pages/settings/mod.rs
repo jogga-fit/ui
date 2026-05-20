@@ -7,7 +7,7 @@ use crate::{
     AddAliasFn, AliasArgs, DeleteAccountFn, MoveAccountArgs, MoveAccountFn, PrivacySettingsArgs,
     RemoveAliasFn, SetPrivacySettingsFn, SetThemeArgs, SetThemeFn,
     components::{error_banner::ErrorBanner, setting_toggle::SettingToggle, theme_card::ThemeCard},
-    types::{AuthSignal, MeResult, MigrationModalSignal, ThemeSignal},
+    types::{AuthSignal, MeResult, MigrationModalSignal, Theme, ThemeSignal},
 };
 
 #[component]
@@ -16,7 +16,7 @@ pub fn SettingsPageView(
     set_theme_fn: SetThemeFn,
     set_privacy_settings_fn: SetPrivacySettingsFn,
     delete_account_fn: DeleteAccountFn,
-    on_theme_saved: EventHandler<String>,
+    on_theme_saved: EventHandler<Theme>,
     on_account_deleted: EventHandler<()>,
 ) -> Element {
     rsx! {
@@ -42,7 +42,7 @@ pub fn SettingsPageView(
 fn AppearanceSection(
     profile: MeResult,
     set_theme_fn: SetThemeFn,
-    on_theme_saved: EventHandler<String>,
+    on_theme_saved: EventHandler<Theme>,
 ) -> Element {
     let auth = use_context::<AuthSignal>();
     let mut theme_signal = use_context::<ThemeSignal>();
@@ -52,41 +52,26 @@ fn AppearanceSection(
         .map(|u| u.token.clone())
         .unwrap_or_default();
 
-    // Start from the server-stored preference; fall back to the local signal value.
-    let initial = {
-        let sig = theme_signal.read().clone();
-        if sig == "system" || sig == "dark" || sig == "light" {
-            sig
-        } else {
-            profile.theme.clone()
-        }
-    };
-    let mut current_pref = use_signal(|| initial);
+    let mut current_pref = use_signal(|| *theme_signal.peek());
     let mut saving = use_signal(|| false);
     let mut error = use_signal(|| Option::<String>::None);
 
-    let make_pick = move |theme: &'static str| {
+    let make_pick = move |theme: Theme| {
         let token = token.clone();
         move |_: MouseEvent| {
-            let prev = current_pref.read().clone();
+            let prev = *current_pref.read();
             if theme == prev {
                 return;
             }
-            current_pref.set(theme.to_string());
+            current_pref.set(theme);
             saving.set(true);
             error.set(None);
             let token = token.clone();
             spawn(async move {
-                match set_theme_fn
-                    .call(SetThemeArgs {
-                        token,
-                        theme: theme.to_string(),
-                    })
-                    .await
-                {
+                match set_theme_fn.call(SetThemeArgs { token, theme }).await {
                     Ok(()) => {
-                        on_theme_saved.call(theme.to_string());
-                        theme_signal.set(theme.to_string());
+                        on_theme_saved.call(theme);
+                        theme_signal.set(theme);
                     }
                     Err(e) => {
                         current_pref.set(prev);
@@ -98,7 +83,7 @@ fn AppearanceSection(
         }
     };
 
-    let pref = current_pref.read().clone();
+    let pref = *current_pref.read();
     let disabled = *saving.read();
 
     rsx! {
@@ -110,42 +95,42 @@ fn AppearanceSection(
                 ThemeCard {
                     id: "system",
                     label: "System",
-                    active: pref == "system",
+                    active: matches!(pref, Theme::System),
                     disabled,
-                    onclick: make_pick("system"),
-                    div { class: format!("{} {}", Styles::theme_preview, Styles::theme_preview__system),
+                    onclick: make_pick(Theme::System),
+                    div { class: "{Styles::theme_preview} {Styles::theme_preview__system}",
                         div { class: Styles::theme_preview_topbar }
                         div { class: Styles::theme_preview_body,
                             div { class: Styles::theme_preview_card }
-                            div { class: format!("{} {}", Styles::theme_preview_card, Styles::theme_preview_card__sm) }
+                            div { class: "{Styles::theme_preview_card} {Styles::theme_preview_card__sm}" }
                         }
                     }
                 }
                 ThemeCard {
                     id: "light",
                     label: "Light",
-                    active: pref == "light",
+                    active: matches!(pref, Theme::Light),
                     disabled,
-                    onclick: make_pick("light"),
-                    div { class: format!("{} {}", Styles::theme_preview, Styles::theme_preview__light),
+                    onclick: make_pick(Theme::Light),
+                    div { class: "{Styles::theme_preview} {Styles::theme_preview__light}",
                         div { class: Styles::theme_preview_topbar }
                         div { class: Styles::theme_preview_body,
                             div { class: Styles::theme_preview_card }
-                            div { class: format!("{} {}", Styles::theme_preview_card, Styles::theme_preview_card__sm) }
+                            div { class: "{Styles::theme_preview_card} {Styles::theme_preview_card__sm}" }
                         }
                     }
                 }
                 ThemeCard {
                     id: "dark",
                     label: "Dark",
-                    active: pref == "dark",
+                    active: matches!(pref, Theme::Dark),
                     disabled,
-                    onclick: make_pick("dark"),
-                    div { class: format!("{} {}", Styles::theme_preview, Styles::theme_preview__dark),
+                    onclick: make_pick(Theme::Dark),
+                    div { class: "{Styles::theme_preview} {Styles::theme_preview__dark}",
                         div { class: Styles::theme_preview_topbar }
                         div { class: Styles::theme_preview_body,
                             div { class: Styles::theme_preview_card }
-                            div { class: format!("{} {}", Styles::theme_preview_card, Styles::theme_preview_card__sm) }
+                            div { class: "{Styles::theme_preview_card} {Styles::theme_preview_card__sm}" }
                         }
                     }
                 }

@@ -35,6 +35,25 @@ pub struct OtpVerifyResult {
     pub ap_id: Option<String>,
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Default, Copy)]
+#[serde(rename_all = "lowercase")]
+pub enum Theme {
+    #[default]
+    System,
+    Dark,
+    Light,
+}
+
+impl std::fmt::Display for Theme {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Dark => write!(f, "dark"),
+            Self::Light => write!(f, "light"),
+            Self::System => write!(f, "system"),
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct MeResult {
     pub username: String,
@@ -49,7 +68,7 @@ pub struct MeResult {
     #[serde(default)]
     pub show_in_directory: bool,
     pub public_profile: bool,
-    pub theme: String,
+    pub theme: Theme,
     #[serde(default)]
     pub also_known_as: Vec<String>,
     #[serde(default)]
@@ -268,8 +287,8 @@ pub struct AuthUser {
 /// Global auth state. `None` = not logged in.
 pub type AuthSignal = Signal<Option<AuthUser>>;
 
-/// Global theme signal ("system" | "dark" | "light"). Provided at the `App` level.
-pub type ThemeSignal = Signal<String>;
+/// Global theme signal.
+pub type ThemeSignal = Signal<Theme>;
 
 /// Migration modal — `Some(profile)` while open, `None` while closed.
 pub type MigrationModalSignal = Signal<Option<MeResult>>;

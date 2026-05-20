@@ -26,7 +26,7 @@ use jogga_ui::{
         switch::{Switch, SwitchThumb},
     },
     pages::MigrationModal,
-    types::{AuthSignal, AuthUser, MigrationModalSignal, ThemeSignal},
+    types::{AuthSignal, AuthUser, MigrationModalSignal, Theme, ThemeSignal},
 };
 
 use app_shell::{ActivePage, AppShell};
@@ -117,12 +117,17 @@ fn App() -> Element {
             js_sys::eval("document.documentElement.getAttribute('data-theme')")
                 .ok()
                 .and_then(|v| v.as_string())
-                .filter(|s| matches!(s.as_str(), "light" | "dark" | "system"))
-                .unwrap_or_else(|| "dark".to_string())
+                .and_then(|s| match s.as_str() {
+                    "dark" => Some(Theme::Dark),
+                    "light" => Some(Theme::Light),
+                    "system" => Some(Theme::System),
+                    _ => None,
+                })
+                .unwrap_or_default()
         }
         #[cfg(not(target_arch = "wasm32"))]
         {
-            "dark".to_string()
+            Theme::default()
         }
     });
     use_context_provider(|| theme);
@@ -131,7 +136,7 @@ fn App() -> Element {
     use_context_provider(|| migration_modal);
 
     use_effect(move || {
-        let pref = theme.read().clone();
+        let pref = *theme.peek();
         spawn(async move {
             // Write theme cookie
             let cookie_js = format!(
@@ -139,7 +144,7 @@ fn App() -> Element {
             );
             let _ = document::eval(&cookie_js).await;
             // Apply to DOM
-            if pref == "system" {
+            if pref == Theme::System {
                 let js = r#"(function() {
                     var mq = window.matchMedia('(prefers-color-scheme: dark)');
                     document.documentElement.setAttribute('data-theme', mq.matches ? 'dark' : 'light');

@@ -2,7 +2,9 @@ use dioxus::core::Callback;
 
 use crate::{
     FutureResult, RoutePoint,
-    types::{ActorInfo, ConnectionsResult, FeedItem, UploadExerciseMeta, UploadExerciseResult},
+    types::{
+        ActorInfo, ConnectionsResult, FeedItem, Theme, UploadExerciseMeta, UploadExerciseResult,
+    },
 };
 
 pub struct TokenApIdArgs {
@@ -32,7 +34,7 @@ pub struct KickFollowerArgs {
 
 pub struct SetThemeArgs {
     pub token: String,
-    pub theme: String,
+    pub theme: Theme,
 }
 
 pub struct MoveAccountArgs {

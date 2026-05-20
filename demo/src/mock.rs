@@ -6,7 +6,7 @@ use jogga_ui::{
     exercise::ExerciseType,
     types::{
         ActorInfo, ConnectionItem, ConnectionsResult, DirectoryItem, ExerciseStats, FeedItem,
-        FollowerItem, FollowingItem, MeResult, ObjectType, ThreadItem, sleep_ms,
+        FollowerItem, FollowingItem, MeResult, ObjectType, Theme, ThreadItem, sleep_ms,
     },
 };
 
@@ -242,7 +242,7 @@ pub fn mock_me() -> MeResult {
         avatar_url: None,
         show_in_directory: true,
         public_profile: true,
-        theme: "dark".to_string(),
+        theme: Theme::Dark,
         also_known_as: vec![],
         moved_to: None,
     }
