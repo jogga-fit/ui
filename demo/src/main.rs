@@ -246,6 +246,7 @@ fn ShellLayout() -> Element {
         AppShell {
             active,
             nav_items,
+            notifications: demo_notifications(),
             user: shell_user,
             on_signin: move |_| do_signin.call(()),
             on_signout: move |_| do_signout.call(()),
