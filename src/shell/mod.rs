@@ -7,7 +7,7 @@ use dioxus::prelude::*;
 pub struct Styles;
 
 use nav::{AccountSheetLink, Brand, NavLinkVariant, NavStyles, ShellNavLink, class_with_active};
-pub use types::{AppShellNavItem, AppShellNavPlacement, AppShellUser};
+pub use types::{AppShellNavPlacement, AppShellUser, PageNav};
 
 use crate::components::notifications::{
     NotificationItem, NotificationList, Styles as NotificationStyles,
@@ -15,8 +15,8 @@ use crate::components::notifications::{
 
 #[component]
 pub fn AppShell(
-    active: String,
-    nav_items: Vec<AppShellNavItem>,
+    active: PageNav,
+    nav_items: Vec<PageNav>,
     #[props(default = "Jogga".to_string())] brand: String,
     #[props(default = "ph ph-person-simple-run".to_string())] brand_icon: String,
     #[props(default)] user: Option<AppShellUser>,
@@ -66,34 +66,14 @@ pub fn AppShell(
             .count()
     });
 
-    let sidebar_nav_items = nav_items
-        .iter()
-        .filter(|item| {
-            matches!(
-                item.placement,
-                AppShellNavPlacement::Primary | AppShellNavPlacement::DesktopOnly
-            )
-        })
-        .cloned()
-        .collect::<Vec<_>>();
-    let sidebar_account_items = nav_items
-        .iter()
-        .filter(|item| item.placement == AppShellNavPlacement::Account)
-        .cloned()
-        .collect::<Vec<_>>();
-    let bottom_nav_items = nav_items
+    let primary_nav = nav_items
         .iter()
         .filter(|item| item.placement == AppShellNavPlacement::Primary)
         .cloned()
         .collect::<Vec<_>>();
-    let sheet_account_items = nav_items
+    let user_nav = nav_items
         .iter()
-        .filter(|item| {
-            matches!(
-                item.placement,
-                AppShellNavPlacement::DesktopOnly | AppShellNavPlacement::Account
-            )
-        })
+        .filter(|item| item.placement == AppShellNavPlacement::User)
         .cloned()
         .collect::<Vec<_>>();
 
@@ -102,11 +82,10 @@ pub fn AppShell(
             nav { class: Styles::sidebar, "data-testid": "sidebar",
                 Brand { brand: brand.clone(), brand_icon: brand_icon.clone(), compact: false }
 
-                for item in sidebar_nav_items {
+                for item in primary_nav.iter() {
                     ShellNavLink {
-                        key: "{item.key}",
-                        item,
-                        active: active.clone(),
+                        item: item.clone(),
+                        active,
                         variant: NavLinkVariant::Sidebar,
                     }
                 }
@@ -150,11 +129,10 @@ pub fn AppShell(
                 }
 
                 if is_logged_in {
-                    for item in sidebar_account_items {
+                    for item in user_nav.clone() {
                         ShellNavLink {
-                            key: "{item.key}",
                             item,
-                            active: active.clone(),
+                            active,
                             variant: NavLinkVariant::Sidebar,
                         }
                     }
@@ -231,13 +209,12 @@ pub fn AppShell(
                 {children}
             }
 
-            if !bottom_nav_items.is_empty() {
+            if !primary_nav.is_empty() {
                 nav { class: Styles::bottom_nav, "data-testid": "bottom-nav",
-                    for item in bottom_nav_items {
+                    for item in primary_nav {
                         ShellNavLink {
-                            key: "{item.key}",
                             item,
-                            active: active.clone(),
+                            active,
                             variant: NavLinkVariant::Bottom,
                         }
                     }
@@ -256,11 +233,10 @@ pub fn AppShell(
                         }
                     }
                     div { class: NavStyles::account_sheet_nav,
-                        for item in sheet_account_items {
+                        for item in user_nav {
                             AccountSheetLink {
-                                key: "{item.key}",
                                 item,
-                                active: active.clone(),
+                                active,
                                 on_follow: move |_| account_open.set(false),
                             }
                         }

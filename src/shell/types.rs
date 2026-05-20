@@ -1,67 +1,47 @@
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum AppShellNavPlacement {
     Primary,
-    DesktopOnly,
-    Account,
+    User,
 }
 
-#[derive(Clone, PartialEq, Eq, Debug)]
-pub struct AppShellNavItem {
-    pub key: String,
-    pub label: String,
-    pub href: String,
-    pub icon_class: String,
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub struct PageNav {
+    pub key: &'static str,
+    pub label: &'static str,
+    pub href: &'static str,
+    pub icon_class: &'static str,
     pub placement: AppShellNavPlacement,
 }
 
-impl AppShellNavItem {
-    pub fn new(
-        key: impl Into<String>,
-        label: impl Into<String>,
-        href: impl Into<String>,
-        icon_class: impl Into<String>,
-        placement: AppShellNavPlacement,
+impl PageNav {
+    pub const fn primary(
+        key: &'static str,
+        label: &'static str,
+        href: &'static str,
+        icon_class: &'static str,
     ) -> Self {
         Self {
-            key: key.into(),
-            label: label.into(),
-            href: href.into(),
-            icon_class: icon_class.into(),
-            placement,
-        }
-    }
-
-    pub fn primary(
-        key: impl Into<String>,
-        label: impl Into<String>,
-        href: impl Into<String>,
-        icon_class: impl Into<String>,
-    ) -> Self {
-        Self::new(key, label, href, icon_class, AppShellNavPlacement::Primary)
-    }
-
-    pub fn desktop_only(
-        key: impl Into<String>,
-        label: impl Into<String>,
-        href: impl Into<String>,
-        icon_class: impl Into<String>,
-    ) -> Self {
-        Self::new(
             key,
             label,
             href,
             icon_class,
-            AppShellNavPlacement::DesktopOnly,
-        )
+            placement: AppShellNavPlacement::Primary,
+        }
     }
 
-    pub fn account(
-        key: impl Into<String>,
-        label: impl Into<String>,
-        href: impl Into<String>,
-        icon_class: impl Into<String>,
+    pub const fn user(
+        key: &'static str,
+        label: &'static str,
+        href: &'static str,
+        icon_class: &'static str,
     ) -> Self {
-        Self::new(key, label, href, icon_class, AppShellNavPlacement::Account)
+        Self {
+            key,
+            label,
+            href,
+            icon_class,
+            placement: AppShellNavPlacement::User,
+        }
     }
 }
 

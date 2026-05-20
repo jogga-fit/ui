@@ -1,5 +1,5 @@
 use super::Styles;
-use super::types::AppShellNavItem;
+use super::types::PageNav;
 use dioxus::prelude::*;
 
 #[css_module("/src/shell/nav.css")]
@@ -24,8 +24,8 @@ pub enum NavLinkVariant {
 }
 
 #[component]
-pub fn ShellNavLink(item: AppShellNavItem, active: String, variant: NavLinkVariant) -> Element {
-    let is_active = item.key == active;
+pub fn ShellNavLink(item: PageNav, active: PageNav, variant: NavLinkVariant) -> Element {
+    let is_active = item.key == active.key;
     let class = match variant {
         NavLinkVariant::Sidebar => {
             class_with_active(Styles::nav_item, Styles::nav_item_active, is_active)
@@ -74,15 +74,11 @@ pub fn Brand(brand: String, brand_icon: String, compact: bool) -> Element {
 }
 
 #[component]
-pub fn AccountSheetLink(
-    item: AppShellNavItem,
-    active: String,
-    on_follow: EventHandler<()>,
-) -> Element {
+pub fn AccountSheetLink(item: PageNav, active: PageNav, on_follow: EventHandler<()>) -> Element {
     let class = class_with_active(
         NavStyles::account_sheet_item,
         NavStyles::account_sheet_item_active,
-        item.key == active,
+        item == active,
     );
 
     rsx! {

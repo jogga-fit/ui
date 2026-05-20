@@ -1,6 +1,5 @@
 #![allow(non_snake_case, unused_braces)]
 
-mod app_shell;
 mod mock;
 mod pages;
 
@@ -26,10 +25,10 @@ use jogga_ui::{
         switch::{Switch, SwitchThumb},
     },
     pages::MigrationModal,
+    shell::{AppShell, types::AppShellUser, types::PageNav},
     types::{AuthSignal, AuthUser, MigrationModalSignal, Theme, ThemeSignal},
 };
 
-use app_shell::{ActivePage, AppShell};
 use mock::*;
 use pages::{
     clubs::{ClubDetailPage, ClubsDemoPage},
@@ -206,16 +205,69 @@ fn AuthLayout() -> Element {
 fn ShellLayout() -> Element {
     let route = use_route::<Route>();
     let active = match route {
-        Route::Feed {} => ActivePage::Feed,
-        Route::Profile {} => ActivePage::Profile,
-        Route::Settings {} => ActivePage::Settings,
-        Route::Post {} => ActivePage::Post,
-        Route::People {} => ActivePage::People,
-        Route::Clubs {} => ActivePage::Clubs,
-        Route::ClubDetail { .. } => ActivePage::Clubs,
-        _ => ActivePage::Feed,
+        Route::Feed {} => NAV_FEED,
+        Route::Profile {} => NAV_PROFILE,
+        Route::Settings {} => NAV_SETTINGS,
+        Route::Post {} => NAV_POST,
+        Route::People {} => NAV_PEOPLE,
+        Route::Clubs {} | Route::ClubDetail { .. } => NAV_CLUBS,
+        _ => NAV_FEED,
     };
-    rsx! { AppShell { active, Outlet::<Route> {} } }
+    let auth = use_context::<AuthSignal>();
+    let current_user = auth.read().clone();
+    let shell_user = current_user
+        .as_ref()
+        .map(|user| AppShellUser::new(user.username.clone()));
+    let nav_items = shell_nav_items(&current_user);
+
+    let do_signout = use_callback(move |_: ()| {
+        spawn(async move {
+            let _ =
+                document::eval("document.cookie='jogga_auth=; path=/; max-age=0; SameSite=Lax';")
+                    .await;
+        });
+        auth.clone().set(None);
+    });
+
+    let do_signin = use_callback(move |_: ()| {
+        spawn(async move {
+            let _ = document::eval(
+                "document.cookie='jogga_auth=alex:demo-token; path=/; max-age=2592000; SameSite=Lax';"
+            ).await;
+        });
+        auth.clone().set(Some(AuthUser {
+            token: "demo-token".to_string(),
+            username: "alex".to_string(),
+            ap_id: "https://jogga.fit/users/alex".to_string(),
+        }));
+    });
+
+    rsx! {
+        AppShell {
+            active,
+            nav_items,
+            user: shell_user,
+            on_signin: move |_| do_signin.call(()),
+            on_signout: move |_| do_signout.call(()),
+            Outlet::<Route> {}
+        }
+    }
+}
+
+const NAV_FEED: PageNav = PageNav::primary("feed", "Feed", "/feed", "ph ph-house");
+const NAV_PEOPLE: PageNav = PageNav::primary("people", "People", "/people", "ph ph-users");
+const NAV_CLUBS: PageNav = PageNav::primary("clubs", "Clubs", "/clubs", "ph ph-users-three");
+const NAV_PROFILE: PageNav = PageNav::user("profile", "Profile", "/profile", "ph ph-user");
+const NAV_SETTINGS: PageNav = PageNav::user("settings", "Settings", "/settings", "ph ph-gear");
+const NAV_POST: PageNav = PageNav::primary("post", "Post", "/post", "ph ph-article");
+
+fn shell_nav_items(user: &Option<AuthUser>) -> Vec<PageNav> {
+    let mut items = vec![NAV_FEED, NAV_PEOPLE, NAV_CLUBS];
+    if user.is_some() {
+        items.push(NAV_PROFILE);
+        items.push(NAV_SETTINGS);
+    }
+    items
 }
 
 #[component]
