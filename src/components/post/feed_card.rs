@@ -65,7 +65,7 @@ pub fn FeedCard(
         let ap_id = delete_ap_id.clone();
         deleting.set(true);
         spawn(async move {
-            if (delete_fn.0)(TokenApIdArgs { token, ap_id }).await.is_ok() {
+            if delete_fn.call(TokenApIdArgs { token, ap_id }).await.is_ok() {
                 if let Some(cb) = on_deleted {
                     cb.call(());
                 }
@@ -300,15 +300,16 @@ pub fn EditPostModal(
         error.set(None);
         spawn(async move {
             let content = if c.is_empty() { None } else { Some(c) };
-            match (update_fn.0)(UpdatePostArgs {
-                token,
-                object_ap_id,
-                content,
-                title,
-                hidden_stats,
-                removed_urls,
-            })
-            .await
+            match update_fn
+                .call(UpdatePostArgs {
+                    token,
+                    object_ap_id,
+                    content,
+                    title,
+                    hidden_stats,
+                    removed_urls,
+                })
+                .await
             {
                 Ok(_) => on_saved.call(()),
                 Err(e) => {

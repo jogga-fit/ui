@@ -1,8 +1,8 @@
 use dioxus::prelude::*;
 
 use crate::{
-    DeleteObjectFn, FollowActorFn, FollowArgs, GetClubFeedFn, LikeFn, RouteFn, TokenApIdArgs,
-    UnfollowActorFn, UpdatePostFn,
+    DeleteObjectFn, FollowActorFn, FollowArgs, GetClubFeedArgs, GetClubFeedFn, LikeFn, RouteFn,
+    TokenApIdArgs, UnfollowActorFn, UpdatePostFn,
     components::{
         empty_state::EmptyState, error_banner::ErrorBanner, post::FeedCard,
         remote_follow_card::RemoteFollowCard,
@@ -89,11 +89,12 @@ fn FindClubCard(
         error.set(None);
         done.set(false);
         spawn(async move {
-            match (follow_actor_fn.0)(FollowArgs {
-                token,
-                handle_or_url,
-            })
-            .await
+            match follow_actor_fn
+                .call(FollowArgs {
+                    token,
+                    handle_or_url,
+                })
+                .await
             {
                 Ok(()) => {
                     target.set(String::new());
@@ -247,7 +248,7 @@ fn LeaveButton(
                             busy.set(true);
                             error.set(None);
                             spawn(async move {
-                                match (unfollow_actor_fn.0)(TokenApIdArgs { token, ap_id }).await {
+                                match unfollow_actor_fn.call(TokenApIdArgs { token, ap_id }).await {
                                     Ok(()) => on_change.call(()),
                                     Err(e) => error.set(Some(e)),
                                 }
@@ -360,7 +361,14 @@ fn ClubFeed(
     let posts = use_resource(move || {
         let t = token_clone.clone();
         let h = handle.clone();
-        async move { (get_club_feed_fn.0)(h, Some(t)).await }
+        async move {
+            get_club_feed_fn
+                .call(GetClubFeedArgs {
+                    handle: h,
+                    token: Some(t),
+                })
+                .await
+        }
     });
 
     let remote_url = if !club.domain.is_empty() {

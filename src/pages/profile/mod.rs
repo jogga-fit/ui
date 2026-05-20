@@ -5,9 +5,10 @@ use dioxus::prelude::*;
 struct Styles;
 
 use crate::{
-    CheckFollowingFn, DeleteObjectFn, FollowArgs, FollowPersonFn, GetActorConnectionsFn,
-    GetActorInfoFn, GetActorPostsFn, LikeFn, RouteFn, TokenApIdArgs, UnfollowActorFn, UpdatePostFn,
-    UpdateProfileArgs, UpdateProfileFn, UploadAvatarArgs, UploadAvatarFn,
+    CheckFollowingFn, DeleteObjectFn, FollowArgs, FollowPersonFn, GetActorConnectionsArgs,
+    GetActorConnectionsFn, GetActorInfoFn, GetActorPostsArgs, GetActorPostsFn, LikeFn, RouteFn,
+    TokenApIdArgs, UnfollowActorFn, UpdatePostFn, UpdateProfileArgs, UpdateProfileFn,
+    UploadAvatarArgs, UploadAvatarFn,
     browser::copy_to_clipboard,
     components::{
         avatar::{Avatar, AvatarSize},
@@ -51,7 +52,7 @@ pub fn ProfilePageView(
 
     let info = use_resource(move || {
         let p = plain_sig();
-        async move { (get_actor_info_fn.0)(p).await }
+        async move { get_actor_info_fn.call(p).await }
     });
 
     // Gate on `ready` so SSR and initial client render produce identical output.
@@ -181,7 +182,8 @@ fn ProfileCard(
             if token.is_empty() {
                 return false;
             }
-            (check_following_fn.0)(TokenApIdArgs { token, ap_id })
+            check_following_fn
+                .call(TokenApIdArgs { token, ap_id })
                 .await
                 .ok()
                 .flatten()
@@ -204,46 +206,54 @@ fn ProfileCard(
     }
     let token_posts = token.clone();
     let posts = use_resource(move || {
-        let u = actor_username_sig();
-        let t = if token_posts.is_empty() {
+        let token = if token_posts.is_empty() {
             None
         } else {
             Some(token_posts.clone())
         };
-        async move { (get_actor_posts_fn.0)(u, t).await }
+        async move {
+            get_actor_posts_fn
+                .call(GetActorPostsArgs {
+                    username: actor_username_sig(),
+                    token,
+                })
+                .await
+        }
     });
 
     let follow_handle = format!("@{}@{}", actor.username, actor.domain);
 
-    let token_save = token.clone();
-    let on_save = move |_: Event<MouseData>| {
-        let t = token_save.clone();
-        let dn = display_name.read().clone();
-        let b = bio.read().clone();
-        saving.set(true);
-        saved.set(false);
-        error.set(None);
-        spawn(async move {
-            let dn_opt = if dn.trim().is_empty() { None } else { Some(dn) };
-            let bio_opt = if b.trim().is_empty() { None } else { Some(b) };
-            match (update_profile_fn.0)(UpdateProfileArgs {
-                token: t,
-                display_name: dn_opt,
-                bio: bio_opt,
-            })
-            .await
-            {
-                Ok(()) => {
-                    saved.set(true);
-                    editing.set(false);
+    let on_save = {
+        let token = token.clone();
+        move |_: Event<MouseData>| {
+            let token = token.clone();
+            let display_name = display_name.peek().clone();
+            let bio = bio.peek().clone();
+            saving.set(true);
+            saved.set(false);
+            error.set(None);
+            spawn(async move {
+                let display_name = if display_name.trim().is_empty() { None } else { Some(display_name) };
+                let bio = if bio.trim().is_empty() { None } else { Some(bio) };
+                match update_profile_fn
+                    .call(UpdateProfileArgs {
+                        token,
+                        display_name,
+                        bio,
+                    })
+                    .await
+                {
+                    Ok(()) => {
+                        saved.set(true);
+                        editing.set(false);
+                    }
+                    Err(e) => error.set(Some(e)),
                 }
-                Err(e) => error.set(Some(e)),
-            }
-            saving.set(false);
-        });
+                saving.set(false);
+            });
+        }
     };
 
-    let t_avatar = token.clone();
     let on_avatar_change = move |_| {
         spawn(async move {
             photo_error.set(None);
@@ -262,27 +272,32 @@ fn ProfileCard(
         });
     };
 
-    let t_avatar_apply = t_avatar.clone();
-    let on_crop_apply = move |crop: CropSelection| {
-        let token = t_avatar_apply.clone();
-        spawn(async move {
-            photo_error.set(None);
-            match compress_avatar_from_input("avatar-file-input", crop).await {
-                Ok(image) => match STANDARD.decode(&image.b64) {
-                    Ok(bytes) => {
-                        match (upload_avatar_fn.0)(UploadAvatarArgs { token, bytes }).await {
-                            Ok(url) => avatar_url.set(Some(url)),
-                            Err(e) => photo_error.set(Some(e)),
+    let on_crop_apply = {
+        let token = token.clone();
+        move |crop: CropSelection| {
+            let token = token.clone();
+            spawn(async move {
+                photo_error.set(None);
+                match compress_avatar_from_input("avatar-file-input", crop).await {
+                    Ok(image) => match STANDARD.decode(&image.b64) {
+                        Ok(bytes) => {
+                            match upload_avatar_fn
+                                .call(UploadAvatarArgs { token, bytes })
+                                .await
+                            {
+                                Ok(url) => avatar_url.set(Some(url)),
+                                Err(e) => photo_error.set(Some(e)),
+                            }
                         }
-                    }
-                    Err(_) => photo_error.set(Some("Image encode failed".to_string())),
-                },
-                Err(err) => photo_error.set(Some(err)),
-            }
-            if let Some(current) = crop_modal.take() {
-                revoke_object_url(&current.object_url);
-            }
-        });
+                        Err(_) => photo_error.set(Some("Image encode failed".to_string())),
+                    },
+                    Err(err) => photo_error.set(Some(err)),
+                }
+                if let Some(current) = crop_modal.take() {
+                    revoke_object_url(&current.object_url);
+                }
+            });
+        }
     };
 
     let on_crop_cancel = move |_| {
@@ -526,16 +541,17 @@ fn ConnectionsModal(
     let mut loading = use_signal(|| false);
 
     // Fetch once when the modal first opens; skip on subsequent tab switches.
-    let username_fetch = username.clone();
-    let token_fetch = token.clone();
     use_effect(move || {
         let tab = connections_tab();
         if tab.is_some() && fetched.read().is_none() && !*loading.read() {
             loading.set(true);
-            let u = username_fetch.clone();
-            let t = token_fetch.clone();
+            let username = username.clone();
+            let token = token.clone();
             spawn(async move {
-                if let Ok(result) = (get_actor_connections_fn.0)(u, t).await {
+                if let Ok(result) = get_actor_connections_fn
+                    .call(GetActorConnectionsArgs { username, token })
+                    .await
+                {
                     fetched.set(Some(result));
                 }
                 loading.set(false);
@@ -608,7 +624,7 @@ fn ConnectionsModal(
                                             } else {
                                                 format!("@{uname}@{domain}")
                                             };
-                                            let display = item.display_name
+                                            let display_name = item.display_name
                                                 .clone()
                                                 .unwrap_or_else(|| item.username.clone());
                                             // Only local profiles are navigable; remote ones
@@ -628,9 +644,9 @@ fn ConnectionsModal(
                                                             nav2.push(format!("/{h}"));
                                                         }
                                                     },
-                                                    Avatar { size: AvatarSize::Small, url: None, name: display.clone() },
+                                                    Avatar { size: AvatarSize::Small, url: None, name: display_name.clone() },
                                                     div { class: "connection-info",
-                                                        span { class: "connection-name", "{display}" }
+                                                        span { class: "connection-name", "{display_name}" }
                                                         span { class: "connection-handle", "{handle}" }
                                                     }
                                                 }
@@ -688,7 +704,8 @@ fn FollowButton(
         let ap_id = ap_id_sig();
         async move {
             if logged_in && !own {
-                (check_following_fn.0)(TokenApIdArgs { token, ap_id })
+                check_following_fn
+                    .call(TokenApIdArgs { token, ap_id })
                     .await
                     .ok()
             } else {
@@ -718,11 +735,12 @@ fn FollowButton(
         in_flight.set(true);
         follow_error.set(None);
         spawn(async move {
-            match (follow_person_fn.0)(FollowArgs {
-                token,
-                handle_or_url,
-            })
-            .await
+            match follow_person_fn
+                .call(FollowArgs {
+                    token,
+                    handle_or_url,
+                })
+                .await
             {
                 Ok(()) => {
                     // Optimistic: show pending (Some(false)) — server will confirm
@@ -743,7 +761,7 @@ fn FollowButton(
         in_flight.set(true);
         follow_error.set(None);
         spawn(async move {
-            match (unfollow_actor_fn.0)(TokenApIdArgs { token, ap_id }).await {
+            match unfollow_actor_fn.call(TokenApIdArgs { token, ap_id }).await {
                 Ok(()) => {
                     follow_status.set(Some(None));
                     follow_resource.restart();

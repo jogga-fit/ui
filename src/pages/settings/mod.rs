@@ -66,7 +66,7 @@ fn AppearanceSection(
     let mut error = use_signal(|| Option::<String>::None);
 
     let make_pick = move |theme: &'static str| {
-        let t = token.clone();
+        let token = token.clone();
         move |_: MouseEvent| {
             let prev = current_pref.read().clone();
             if theme == prev {
@@ -75,13 +75,14 @@ fn AppearanceSection(
             current_pref.set(theme.to_string());
             saving.set(true);
             error.set(None);
-            let token = t.clone();
+            let token = token.clone();
             spawn(async move {
-                match (set_theme_fn.0)(SetThemeArgs {
-                    token,
-                    theme: theme.to_string(),
-                })
-                .await
+                match set_theme_fn
+                    .call(SetThemeArgs {
+                        token,
+                        theme: theme.to_string(),
+                    })
+                    .await
                 {
                     Ok(()) => {
                         on_theme_saved.call(theme.to_string());
@@ -248,11 +249,11 @@ fn DangerZoneSection(
     let mut error = use_signal(|| Option::<String>::None);
 
     let on_delete = move |_: Event<MouseData>| {
-        let t = token.clone();
+        let token = token.clone();
         loading.set(true);
         error.set(None);
         spawn(async move {
-            match (delete_account_fn.0)(t).await {
+            match delete_account_fn.call(token).await {
                 Ok(()) => on_account_deleted.call(()),
                 Err(e) => {
                     error.set(Some(e));
@@ -336,19 +337,20 @@ fn PrivacySection(profile: MeResult, set_privacy_settings_fn: SetPrivacySettings
     let mut error = use_signal(|| Option::<String>::None);
 
     let on_toggle_public = {
-        let t = token.clone();
+        let token = token.clone();
         move |_| {
             let next_pub = !*public_profile.read();
             public_profile.set(next_pub);
             saving.set(true);
             error.set(None);
-            let t = t.clone();
+            let token = token.clone();
             spawn(async move {
-                if let Err(e) = (set_privacy_settings_fn.0)(PrivacySettingsArgs {
-                    token: t,
-                    public_profile: next_pub,
-                })
-                .await
+                if let Err(e) = set_privacy_settings_fn
+                    .call(PrivacySettingsArgs {
+                        token,
+                        public_profile: next_pub,
+                    })
+                    .await
                 {
                     public_profile.set(!next_pub);
                     error.set(Some(e));
@@ -562,31 +564,34 @@ fn AliasesSubsection(
     let mut busy = use_signal(|| false);
     let mut error = use_signal(|| Option::<String>::None);
 
-    let token_for_add = token.clone();
-    let on_add = move |_: Event<MouseData>| {
-        let new_alias = input.read().trim().to_string();
-        if new_alias.is_empty() {
-            return;
-        }
-        let token = token_for_add.clone();
-        let mut aliases = aliases;
-        busy.set(true);
-        error.set(None);
-        spawn(async move {
-            match (add_alias_fn.0)(AliasArgs {
-                token,
-                alias: new_alias.clone(),
-            })
-            .await
-            {
-                Ok(()) => {
-                    aliases.write().push(new_alias);
-                    input.set(String::new());
-                }
-                Err(e) => error.set(Some(e)),
+    let on_add = {
+        let token = token.clone();
+        move |_: Event<MouseData>| {
+            let new_alias = input.read().trim().to_string();
+            if new_alias.is_empty() {
+                return;
             }
-            busy.set(false);
-        });
+            let token = token.clone();
+            let mut aliases = aliases;
+            busy.set(true);
+            error.set(None);
+            spawn(async move {
+                match add_alias_fn
+                    .call(AliasArgs {
+                        token,
+                        alias: new_alias.clone(),
+                    })
+                    .await
+                {
+                    Ok(()) => {
+                        aliases.write().push(new_alias);
+                        input.set(String::new());
+                    }
+                    Err(e) => error.set(Some(e)),
+                }
+                busy.set(false);
+            });
+        }
     };
 
     rsx! {
@@ -651,29 +656,32 @@ fn AliasRow(
     let mut busy = use_signal(|| false);
     let mut error = use_signal(|| Option::<String>::None);
 
-    let alias_for_remove = alias.clone();
-    let on_remove = move |_: Event<MouseData>| {
-        let token = token.clone();
-        let a = alias_for_remove.clone();
-        let mut aliases = aliases;
-        busy.set(true);
-        error.set(None);
-        spawn(async move {
-            match (remove_alias_fn.0)(AliasArgs {
-                token,
-                alias: a.clone(),
-            })
-            .await
-            {
-                Ok(()) => {
-                    aliases.write().retain(|x| x != &a);
+    let on_remove = {
+        let alias = alias.clone();
+        move |_: Event<MouseData>| {
+            let token = token.clone();
+            let alias = alias.clone();
+            let mut aliases = aliases;
+            busy.set(true);
+            error.set(None);
+            spawn(async move {
+                match remove_alias_fn
+                    .call(AliasArgs {
+                        token,
+                        alias: alias.clone(),
+                    })
+                    .await
+                {
+                    Ok(()) => {
+                        aliases.write().retain(|x| x != &alias);
+                    }
+                    Err(e) => {
+                        error.set(Some(e));
+                        busy.set(false);
+                    }
                 }
-                Err(e) => {
-                    error.set(Some(e));
-                    busy.set(false);
-                }
-            }
-        });
+            });
+        }
     };
 
     rsx! {
@@ -713,11 +721,12 @@ fn MoveAccountSubsection(
         busy.set(true);
         error.set(None);
         spawn(async move {
-            match (move_account_fn.0)(MoveAccountArgs {
-                token,
-                target_ap_id,
-            })
-            .await
+            match move_account_fn
+                .call(MoveAccountArgs {
+                    token,
+                    target_ap_id,
+                })
+                .await
             {
                 Ok(()) => {
                     success.set(true);

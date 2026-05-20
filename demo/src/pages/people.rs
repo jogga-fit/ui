@@ -4,8 +4,9 @@ use dioxus::prelude::*;
 use jogga_ui::{pages::PeoplePageView, types::AuthSignal};
 
 use crate::mock::{
-    mock_directory_items, mock_follower_items, mock_following_items, pending_follow_requests,
-    people_fns,
+    mock_accept_follow_request, mock_directory_items, mock_follow_person, mock_follower_items,
+    mock_following_items, mock_kick_follower, mock_reject_follow_request, mock_unfollow_actor,
+    pending_follow_requests,
 };
 
 #[component]
@@ -18,14 +19,6 @@ pub fn PeopleDemoPage() -> Element {
         .map(|u| u.token.clone())
         .unwrap_or_default();
 
-    let (
-        follow_person_fn,
-        unfollow_actor_fn,
-        kick_follower_fn,
-        accept_follow_request_fn,
-        reject_follow_request_fn,
-    ) = people_fns();
-
     rsx! {
         PeoplePageView {
             is_logged_in,
@@ -36,11 +29,11 @@ pub fn PeopleDemoPage() -> Element {
             directory_items: mock_directory_items(),
             on_following_change: move |_| {},
             on_follower_change: move |_| {},
-            follow_person_fn,
-            unfollow_actor_fn,
-            kick_follower_fn,
-            accept_follow_request_fn,
-            reject_follow_request_fn,
+            follow_person_fn: Callback::new(mock_follow_person),
+            unfollow_actor_fn: Callback::new(mock_unfollow_actor),
+            kick_follower_fn: Callback::new(mock_kick_follower),
+            accept_follow_request_fn: Callback::new(mock_accept_follow_request),
+            reject_follow_request_fn: Callback::new(mock_reject_follow_request),
         }
     }
 }

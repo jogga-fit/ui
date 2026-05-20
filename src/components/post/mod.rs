@@ -201,7 +201,7 @@ pub fn ExerciseCard(
         let ap_id = delete_ap_id.clone();
         deleting.set(true);
         spawn(async move {
-            if (delete_fn.0)(TokenApIdArgs { token, ap_id }).await.is_ok() {
+            if delete_fn.call(TokenApIdArgs { token, ap_id }).await.is_ok() {
                 on_deleted.call(());
             }
             deleting.set(false);
@@ -311,7 +311,7 @@ pub fn ReplyItem(
         let ap_id = delete_ap_id.clone();
         deleting.set(true);
         spawn(async move {
-            if (delete_fn.0)(TokenApIdArgs { token, ap_id }).await.is_ok() {
+            if delete_fn.call(TokenApIdArgs { token, ap_id }).await.is_ok() {
                 on_deleted.call(());
             }
             deleting.set(false);
@@ -378,12 +378,13 @@ pub fn ReplyComposer(
             submitting.set(true);
             error.set(None);
             spawn(async move {
-                match (create_reply_fn.0)(CreateReplyArgs {
-                    token,
-                    content: text,
-                    in_reply_to,
-                })
-                .await
+                match create_reply_fn
+                    .call(CreateReplyArgs {
+                        token,
+                        content: text,
+                        in_reply_to,
+                    })
+                    .await
                 {
                     Ok(()) => {
                         content.set(String::new());

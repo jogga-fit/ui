@@ -6,8 +6,7 @@ mod pages;
 
 use dioxus::prelude::*;
 use jogga_ui::{
-    AddAliasFn, CreateReplyFn, DeleteObjectFn, LikeFn, MoveAccountFn, RemoveAliasFn, RouteFn,
-    UiStyles, UpdatePostFn, browser,
+    UiStyles, browser,
     components::{
         actor_link::ActorLink,
         auth_card::AuthCard,
@@ -174,9 +173,9 @@ fn App() -> Element {
             MigrationModal {
                 profile,
                 on_close: move |_| migration_modal.clone().set(None),
-                add_alias_fn: AddAliasFn(mock_add_alias),
-                remove_alias_fn: RemoveAliasFn(mock_remove_alias),
-                move_account_fn: MoveAccountFn(mock_move_account),
+                add_alias_fn: Callback::new(mock_add_alias),
+                remove_alias_fn: Callback::new(mock_remove_alias),
+                move_account_fn: Callback::new(mock_move_account),
             }
         }
     }
@@ -296,12 +295,12 @@ fn DemoPageNav() -> Element {
 fn DemoPage() -> Element {
     let token = Some("demo-token-abc".to_string());
 
-    let like_fn = LikeFn(mock_like);
-    let unlike_fn = LikeFn(mock_like);
-    let delete_fn = DeleteObjectFn(mock_delete);
-    let route_fn = RouteFn(mock_route);
-    let update_fn = UpdatePostFn(mock_update_post);
-    let reply_fn = CreateReplyFn(mock_create_reply);
+    let like_fn = Callback::new(mock_like);
+    let unlike_fn = Callback::new(mock_like);
+    let delete_fn = Callback::new(mock_delete);
+    let route_fn = Callback::new(mock_route);
+    let update_fn = Callback::new(mock_update_post);
+    let reply_fn = Callback::new(mock_create_reply);
 
     let mut switch_on = use_signal(|| false);
     let mut setting_on = use_signal(|| true);

@@ -1,10 +1,7 @@
 #![allow(non_snake_case)]
 
 use dioxus::prelude::*;
-use jogga_ui::{
-    CreateReplyFn, DeleteObjectFn, LikeFn, RouteFn, UpdatePostFn,
-    components::post::ExerciseThreadPage,
-};
+use jogga_ui::components::post::ExerciseThreadPage;
 
 use crate::mock::{
     mock_create_reply, mock_delete, mock_like, mock_route, mock_update_post, reply_item,
@@ -22,12 +19,12 @@ pub fn PostPage() -> Element {
             edit_open,
             on_parent_deleted: move |_| {},
             on_thread_refresh: move |_| {},
-            delete_fn: DeleteObjectFn(mock_delete),
-            like_fn: LikeFn(mock_like),
-            unlike_fn: LikeFn(mock_like),
-            route_fn: RouteFn(mock_route),
-            update_fn: UpdatePostFn(mock_update_post),
-            create_reply_fn: CreateReplyFn(mock_create_reply),
+            delete_fn: Callback::new(mock_delete),
+            like_fn: Callback::new(mock_like),
+            unlike_fn: Callback::new(mock_like),
+            route_fn: Callback::new(mock_route),
+            update_fn: Callback::new(mock_update_post),
+            create_reply_fn: Callback::new(mock_create_reply),
         }
     }
 }

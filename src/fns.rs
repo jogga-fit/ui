@@ -1,22 +1,9 @@
-use std::ptr::fn_addr_eq;
+use dioxus::core::Callback;
 
 use crate::{
     FutureResult, RoutePoint,
     types::{ActorInfo, ConnectionsResult, FeedItem, UploadExerciseMeta, UploadExerciseResult},
 };
-
-macro_rules! fn_adapter {
-    ($name:ident, $fn_ty:ty) => {
-        #[derive(Clone, Copy)]
-        pub struct $name(pub $fn_ty);
-
-        impl PartialEq for $name {
-            fn eq(&self, other: &Self) -> bool {
-                fn_addr_eq(self.0, other.0)
-            }
-        }
-    };
-}
 
 pub struct TokenApIdArgs {
     pub token: String,
@@ -97,56 +84,43 @@ pub struct UploadExerciseArgs {
     pub meta: UploadExerciseMeta,
 }
 
-fn_adapter!(LikeFn, fn(TokenApIdArgs) -> FutureResult<()>);
-fn_adapter!(
-    RouteFn,
-    fn(FetchRouteArgs) -> FutureResult<Option<Vec<RoutePoint>>>
-);
-fn_adapter!(DeleteObjectFn, fn(TokenApIdArgs) -> FutureResult<()>);
-fn_adapter!(CreateReplyFn, fn(CreateReplyArgs) -> FutureResult<()>);
-fn_adapter!(UpdatePostFn, fn(UpdatePostArgs) -> FutureResult<()>);
-fn_adapter!(
-    CheckFollowingFn,
-    fn(TokenApIdArgs) -> FutureResult<Option<bool>>
-);
-fn_adapter!(UpdateProfileFn, fn(UpdateProfileArgs) -> FutureResult<()>);
-fn_adapter!(UploadAvatarFn, fn(UploadAvatarArgs) -> FutureResult<String>);
-fn_adapter!(FollowPersonFn, fn(FollowArgs) -> FutureResult<()>);
-fn_adapter!(FollowActorFn, fn(FollowArgs) -> FutureResult<()>);
-fn_adapter!(UnfollowActorFn, fn(TokenApIdArgs) -> FutureResult<()>);
-fn_adapter!(KickFollowerFn, fn(KickFollowerArgs) -> FutureResult<()>);
-fn_adapter!(
-    AcceptFollowRequestFn,
-    fn(FollowRequestArgs) -> FutureResult<()>
-);
-fn_adapter!(
-    RejectFollowRequestFn,
-    fn(FollowRequestArgs) -> FutureResult<()>
-);
-fn_adapter!(SetThemeFn, fn(SetThemeArgs) -> FutureResult<()>);
-fn_adapter!(
-    SetPrivacySettingsFn,
-    fn(PrivacySettingsArgs) -> FutureResult<()>
-);
-fn_adapter!(AddAliasFn, fn(AliasArgs) -> FutureResult<()>);
-fn_adapter!(RemoveAliasFn, fn(AliasArgs) -> FutureResult<()>);
-fn_adapter!(MoveAccountFn, fn(MoveAccountArgs) -> FutureResult<()>);
-fn_adapter!(
-    UploadExerciseFn,
-    fn(UploadExerciseArgs) -> FutureResult<UploadExerciseResult>
-);
+pub struct GetActorPostsArgs {
+    pub username: String,
+    pub token: Option<String>,
+}
 
-fn_adapter!(GetActorInfoFn, fn(String) -> FutureResult<ActorInfo>);
-fn_adapter!(
-    GetActorPostsFn,
-    fn(String, Option<String>) -> FutureResult<Vec<FeedItem>>
-);
-fn_adapter!(
-    GetActorConnectionsFn,
-    fn(String, Option<String>) -> FutureResult<ConnectionsResult>
-);
-fn_adapter!(
-    GetClubFeedFn,
-    fn(String, Option<String>) -> FutureResult<Vec<FeedItem>>
-);
-fn_adapter!(DeleteAccountFn, fn(String) -> FutureResult<()>);
+pub struct GetActorConnectionsArgs {
+    pub username: String,
+    pub token: Option<String>,
+}
+
+pub struct GetClubFeedArgs {
+    pub handle: String,
+    pub token: Option<String>,
+}
+
+pub type LikeFn = Callback<TokenApIdArgs, FutureResult<()>>;
+pub type DeleteObjectFn = Callback<TokenApIdArgs, FutureResult<()>>;
+pub type CreateReplyFn = Callback<CreateReplyArgs, FutureResult<()>>;
+pub type RouteFn = Callback<FetchRouteArgs, FutureResult<Option<Vec<RoutePoint>>>>;
+pub type UpdatePostFn = Callback<UpdatePostArgs, FutureResult<()>>;
+pub type CheckFollowingFn = Callback<TokenApIdArgs, FutureResult<Option<bool>>>;
+pub type UpdateProfileFn = Callback<UpdateProfileArgs, FutureResult<()>>;
+pub type UploadAvatarFn = Callback<UploadAvatarArgs, FutureResult<String>>;
+pub type FollowPersonFn = Callback<FollowArgs, FutureResult<()>>;
+pub type FollowActorFn = Callback<FollowArgs, FutureResult<()>>;
+pub type UnfollowActorFn = Callback<TokenApIdArgs, FutureResult<()>>;
+pub type KickFollowerFn = Callback<KickFollowerArgs, FutureResult<()>>;
+pub type AcceptFollowRequestFn = Callback<FollowRequestArgs, FutureResult<()>>;
+pub type RejectFollowRequestFn = Callback<FollowRequestArgs, FutureResult<()>>;
+pub type SetThemeFn = Callback<SetThemeArgs, FutureResult<()>>;
+pub type SetPrivacySettingsFn = Callback<PrivacySettingsArgs, FutureResult<()>>;
+pub type AddAliasFn = Callback<AliasArgs, FutureResult<()>>;
+pub type RemoveAliasFn = Callback<AliasArgs, FutureResult<()>>;
+pub type MoveAccountFn = Callback<MoveAccountArgs, FutureResult<()>>;
+pub type UploadExerciseFn = Callback<UploadExerciseArgs, FutureResult<UploadExerciseResult>>;
+pub type GetActorInfoFn = Callback<String, FutureResult<ActorInfo>>;
+pub type GetActorPostsFn = Callback<GetActorPostsArgs, FutureResult<Vec<FeedItem>>>;
+pub type GetActorConnectionsFn = Callback<GetActorConnectionsArgs, FutureResult<ConnectionsResult>>;
+pub type GetClubFeedFn = Callback<GetClubFeedArgs, FutureResult<Vec<FeedItem>>>;
+pub type DeleteAccountFn = Callback<String, FutureResult<()>>;

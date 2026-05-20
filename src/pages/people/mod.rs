@@ -218,7 +218,7 @@ fn FollowingTab(
                                     let ap_id = ap_id_unfollow.clone();
                                     busy.set(true);
                                     spawn(async move {
-                                        let _ = (unfollow_actor_fn.0)(TokenApIdArgs { token, ap_id }).await;
+                                        let _ = unfollow_actor_fn.call(TokenApIdArgs { token, ap_id }).await;
                                         busy.set(false);
                                         confirming.set(None);
                                         on_change.call(());
@@ -293,7 +293,7 @@ fn FollowersTab(
                             let token = tok.clone();
                             let follower_ap_id = ap_id.clone();
                             spawn(async move {
-                                let _ = (kick_follower_fn.0)(KickFollowerArgs { token, follower_ap_id }).await;
+                                let _ = kick_follower_fn.call(KickFollowerArgs { token, follower_ap_id }).await;
                                 on_change.call(());
                             });
                         },
@@ -360,7 +360,7 @@ fn RequestsTab(
                                 let aid = ap_id.clone();
                                 let fid = follow_ap_id.clone();
                                 spawn(async move {
-                                    let _ = (accept_follow_request_fn.0)(FollowRequestArgs {
+                                    let _ = accept_follow_request_fn.call(FollowRequestArgs {
                                         token: t,
                                         ap_id: aid,
                                         follow_ap_id: fid,
@@ -379,7 +379,7 @@ fn RequestsTab(
                                 let aid = ap_id_r.clone();
                                 let fid = follow_ap_id_r.clone();
                                 spawn(async move {
-                                    let _ = (reject_follow_request_fn.0)(FollowRequestArgs {
+                                    let _ = reject_follow_request_fn.call(FollowRequestArgs {
                                         token: t,
                                         ap_id: aid,
                                         follow_ap_id: fid,
@@ -411,20 +411,21 @@ fn FollowCard(
     let on_follow = {
         let token = token.clone();
         move |_: ()| {
-            let t = token.clone();
-            let ap_id = target.read().trim().to_string();
-            if ap_id.is_empty() {
+            let token = token.clone();
+            let handle_or_url = target.read().trim().to_string();
+            if handle_or_url.is_empty() {
                 return;
             }
             following_signal.set(true);
             error.set(None);
             done.set(false);
             spawn(async move {
-                match (follow_person_fn.0)(FollowArgs {
-                    token: t,
-                    handle_or_url: ap_id,
-                })
-                .await
+                match follow_person_fn
+                    .call(FollowArgs {
+                        token,
+                        handle_or_url,
+                    })
+                    .await
                 {
                     Ok(()) => {
                         target.set(String::new());

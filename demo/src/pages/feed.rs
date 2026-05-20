@@ -2,7 +2,6 @@
 
 use dioxus::prelude::*;
 use jogga_ui::{
-    DeleteObjectFn, LikeFn, RouteFn, UpdatePostFn,
     pages::{ActivityComposer, ActivityPreview, HomePageView},
     types::{AuthSignal, AuthUser, sleep_ms},
 };
@@ -52,11 +51,11 @@ pub fn FeedPage() -> Element {
             feed: Some(Ok(feed)),
             token,
             on_feed_refresh: move |_| {},
-            delete_fn: DeleteObjectFn(mock_delete),
-            like_fn: LikeFn(mock_like),
-            unlike_fn: LikeFn(mock_like),
-            route_fn: RouteFn(mock_route),
-            update_fn: UpdatePostFn(mock_update_post),
+            delete_fn: Callback::new(mock_delete),
+            like_fn: Callback::new(mock_like),
+            unlike_fn: Callback::new(mock_like),
+            route_fn: Callback::new(mock_route),
+            update_fn: Callback::new(mock_update_post),
             on_signin,
         }
     }

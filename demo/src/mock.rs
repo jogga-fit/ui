@@ -1,10 +1,8 @@
 use jogga_ui::{
-    AcceptFollowRequestFn, AddAliasFn, AliasArgs, CheckFollowingFn, CreateReplyArgs,
-    DeleteAccountFn, FetchRouteArgs, FollowArgs, FollowPersonFn, FollowRequestArgs, FutureResult,
-    GetActorConnectionsFn, GetActorInfoFn, GetActorPostsFn, KickFollowerArgs, KickFollowerFn,
-    MoveAccountArgs, MoveAccountFn, PrivacySettingsArgs, RejectFollowRequestFn, RemoveAliasFn,
-    RoutePoint, SetPrivacySettingsFn, SetThemeArgs, SetThemeFn, TokenApIdArgs, UnfollowActorFn,
-    UpdatePostArgs, UpdateProfileArgs, UpdateProfileFn, UploadAvatarArgs, UploadAvatarFn,
+    AliasArgs, CreateReplyArgs, FetchRouteArgs, FollowArgs, FollowRequestArgs, FutureResult,
+    GetActorConnectionsArgs, GetActorPostsArgs, KickFollowerArgs, MoveAccountArgs,
+    PrivacySettingsArgs, RoutePoint, SetThemeArgs, TokenApIdArgs, UpdatePostArgs,
+    UpdateProfileArgs, UploadAvatarArgs,
     exercise::ExerciseType,
     types::{
         ActorInfo, ConnectionItem, ConnectionsResult, DirectoryItem, ExerciseStats, FeedItem,
@@ -117,10 +115,7 @@ pub fn mock_get_actor_info(_username: String) -> FutureResult<ActorInfo> {
     })
 }
 
-pub fn mock_get_actor_posts(
-    _username: String,
-    _token: Option<String>,
-) -> FutureResult<Vec<FeedItem>> {
+pub fn mock_get_actor_posts(_args: GetActorPostsArgs) -> FutureResult<Vec<FeedItem>> {
     Box::pin(async move {
         sleep_ms(300).await;
         Ok(vec![run_item(), run_with_route_item()])
@@ -128,8 +123,7 @@ pub fn mock_get_actor_posts(
 }
 
 pub fn mock_get_actor_connections(
-    _username: String,
-    _token: Option<String>,
+    _args: GetActorConnectionsArgs,
 ) -> FutureResult<ConnectionsResult> {
     Box::pin(async move {
         sleep_ms(300).await;
@@ -722,60 +716,4 @@ pub fn mock_directory_items() -> Vec<DirectoryItem> {
             avatar_url: None,
         },
     ]
-}
-
-pub fn people_fns() -> (
-    FollowPersonFn,
-    UnfollowActorFn,
-    KickFollowerFn,
-    AcceptFollowRequestFn,
-    RejectFollowRequestFn,
-) {
-    (
-        FollowPersonFn(mock_follow_person),
-        UnfollowActorFn(mock_unfollow_actor),
-        KickFollowerFn(mock_kick_follower),
-        AcceptFollowRequestFn(mock_accept_follow_request),
-        RejectFollowRequestFn(mock_reject_follow_request),
-    )
-}
-
-pub fn profile_fns() -> (
-    GetActorInfoFn,
-    GetActorPostsFn,
-    GetActorConnectionsFn,
-    CheckFollowingFn,
-    UpdateProfileFn,
-    UploadAvatarFn,
-    FollowPersonFn,
-    UnfollowActorFn,
-) {
-    (
-        GetActorInfoFn(mock_get_actor_info),
-        GetActorPostsFn(mock_get_actor_posts),
-        GetActorConnectionsFn(mock_get_actor_connections),
-        CheckFollowingFn(mock_check_following),
-        UpdateProfileFn(mock_update_profile),
-        UploadAvatarFn(mock_upload_avatar),
-        FollowPersonFn(mock_follow_person),
-        UnfollowActorFn(mock_unfollow_actor),
-    )
-}
-
-pub fn settings_fns() -> (
-    SetThemeFn,
-    SetPrivacySettingsFn,
-    DeleteAccountFn,
-    AddAliasFn,
-    RemoveAliasFn,
-    MoveAccountFn,
-) {
-    (
-        SetThemeFn(mock_set_theme),
-        SetPrivacySettingsFn(mock_set_privacy_settings),
-        DeleteAccountFn(mock_delete_account),
-        AddAliasFn(mock_add_alias),
-        RemoveAliasFn(mock_remove_alias),
-        MoveAccountFn(mock_move_account),
-    )
 }

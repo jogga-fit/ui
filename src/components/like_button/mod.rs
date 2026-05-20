@@ -44,9 +44,9 @@ pub fn LikeButton(
         liking.set(true);
         spawn(async move {
             let result = if currently_liked {
-                unlike_fn.0(TokenApIdArgs { token, ap_id }).await
+                unlike_fn.call(TokenApIdArgs { token, ap_id }).await
             } else {
-                like_fn.0(TokenApIdArgs { token, ap_id }).await
+                like_fn.call(TokenApIdArgs { token, ap_id }).await
             };
             if result.is_err() {
                 liked.set(currently_liked);

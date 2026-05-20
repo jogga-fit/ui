@@ -112,7 +112,7 @@ pub fn RouteMap(
     let route_resource = use_resource(move || {
         let url = url.clone();
         let token = tok.clone();
-        async move { route_fn.0(FetchRouteArgs { url, token }).await }
+        async move { route_fn.call(FetchRouteArgs { url, token }).await }
     });
 
     match route_resource() {
@@ -156,7 +156,7 @@ pub fn RouteSection(
     let route_resource = use_resource(move || {
         let url = url.clone();
         let token = tok.clone();
-        async move { route_fn.0(FetchRouteArgs { url, token }).await }
+        async move { route_fn.call(FetchRouteArgs { url, token }).await }
     });
 
     match route_resource() {
