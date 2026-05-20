@@ -8,7 +8,7 @@ struct Styles;
 #[component]
 pub fn LikeButton(
     object_ap_id: String,
-    token: Option<String>,
+    token: ReadSignal<Option<String>>,
     initial_liked: bool,
     initial_count: i64,
     like_fn: LikeFn,
@@ -18,28 +18,22 @@ pub fn LikeButton(
     let mut liked = use_signal(|| initial_liked);
     let mut like_count = use_signal(|| initial_count);
     let mut liking = use_signal(|| false);
-    // Keep a signal for the token so handlers always see the latest value even
-    // when SSR hydration attaches a closure before auth propagates from localStorage.
-    let mut token_signal = use_signal(|| token.clone());
-    use_effect(move || {
-        token_signal.set(token.clone());
-    });
 
     let stop_prop = stop_propagation;
     let toggle_like = move |e: MouseEvent| {
         if stop_prop {
             e.stop_propagation();
         }
-        if *liking.read() {
+        if *liking.peek() {
             return;
         }
-        let Some(token) = token_signal.read().clone() else {
+        let Some(token) = token.peek().clone() else {
             return;
         };
         let ap_id = object_ap_id.clone();
-        let currently_liked = *liked.read();
+        let currently_liked = *liked.peek();
         liked.set(!currently_liked);
-        let new_count = *like_count.read() + if currently_liked { -1 } else { 1 };
+        let new_count = *like_count.peek() + if currently_liked { -1 } else { 1 };
         like_count.set(new_count);
         liking.set(true);
         spawn(async move {
@@ -50,7 +44,7 @@ pub fn LikeButton(
             };
             if result.is_err() {
                 liked.set(currently_liked);
-                let rolled_back = *like_count.read() + if currently_liked { 1 } else { -1 };
+                let rolled_back = *like_count.peek() + if currently_liked { 1 } else { -1 };
                 like_count.set(rolled_back);
             }
             liking.set(false);
@@ -61,7 +55,7 @@ pub fn LikeButton(
         button {
             class: "{Styles::like_btn}",
             class: if *liked.read() { "{Styles::like_btn_active}" },
-            disabled: token_signal.read().is_none() || *liking.read(),
+            disabled: token.read().is_none() || *liking.read(),
             onclick: toggle_like,
             title: if *liked.read() { "Unlike" } else { "Like" },
             aria_label: if *liked.read() { "Unlike" } else { "Like" },
