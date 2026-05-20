@@ -5,22 +5,21 @@ use dioxus::prelude::*;
 struct Styles;
 
 use crate::{
-    CheckFollowingFn, DeleteObjectFn, FollowArgs, FollowPersonFn, GetActorConnectionsArgs,
+    CheckFollowingFn, DeleteObjectFn, FollowPersonFn, GetActorConnectionsArgs,
     GetActorConnectionsFn, GetActorInfoFn, GetActorPostsArgs, GetActorPostsFn, LikeFn, RouteFn,
     TokenApIdArgs, UnfollowActorFn, UpdatePostFn, UpdateProfileArgs, UpdateProfileFn,
     UploadAvatarArgs, UploadAvatarFn,
-    browser::copy_to_clipboard,
     components::{
         avatar::{Avatar, AvatarSize},
         crop_modal::{CropModal, CropModalState},
         error_banner::ErrorBanner,
+        follow_button::FollowButton,
         post::FeedCard,
     },
     image::{
         CropSelection, clear_file_input, compress_avatar_from_input,
         prepare_selected_image_from_input, revoke_object_url,
     },
-    sleep_ms,
     types::{ActorInfo, AuthSignal, ConnectionItem, ConnectionsResult},
 };
 
@@ -376,7 +375,7 @@ fn ProfileCard(
                         token: token.clone(),
                         ap_id: actor.ap_id.clone(),
                         handle: follow_handle.clone(),
-                        check_following_fn,
+                        check_following_fn: Some(check_following_fn),
                         follow_person_fn,
                         unfollow_actor_fn,
                     }
@@ -667,173 +666,6 @@ fn ConnectionsModal(
                         }
                     }
                 }
-            }
-        }
-    }
-}
-
-#[component]
-fn FollowButton(
-    is_own: bool,
-    is_logged_in: bool,
-    token: String,
-    ap_id: String,
-    handle: String,
-    check_following_fn: CheckFollowingFn,
-    follow_person_fn: FollowPersonFn,
-    unfollow_actor_fn: UnfollowActorFn,
-) -> Element {
-    // None = not following, Some(false) = pending, Some(true) = accepted
-    let mut follow_status = use_signal(|| Option::<Option<bool>>::None);
-    let mut in_flight = use_signal(|| false);
-    let mut follow_error = use_signal(|| Option::<String>::None);
-    let mut copied = use_signal(|| false);
-
-    // Peek-compare: sync props into signals so use_resource / RSX re-run on navigation.
-    let mut is_own_sig = use_signal(|| is_own);
-    let mut is_logged_in_sig = use_signal(|| is_logged_in);
-    let mut ap_id_sig = use_signal(|| ap_id.clone());
-
-    if *is_own_sig.peek() != is_own {
-        is_own_sig.set(is_own);
-    }
-    if *is_logged_in_sig.peek() != is_logged_in {
-        is_logged_in_sig.set(is_logged_in);
-    }
-    if *ap_id_sig.peek() != ap_id {
-        ap_id_sig.set(ap_id.clone());
-    }
-
-    // Fetch follow status. Re-runs automatically on profile navigation (ap_id change).
-    let token_check = token.clone();
-    let mut follow_resource = use_resource(move || {
-        let logged_in = is_logged_in_sig();
-        let own = is_own_sig();
-        let token = token_check.clone();
-        let ap_id = ap_id_sig();
-        async move {
-            if logged_in && !own {
-                check_following_fn
-                    .call(TokenApIdArgs { token, ap_id })
-                    .await
-                    .ok()
-            } else {
-                None
-            }
-        }
-    });
-
-    // Sync resource into follow_status only when no mutation is in flight.
-    // When in_flight is true the optimistic value owns follow_status.
-    // When the resource is restarting (outer None = loading) we don't override.
-    if !*in_flight.peek() {
-        if let Some(resource_val) = follow_resource.read().as_ref() {
-            // resource_val: &Option<Option<bool>> — inner None = not following,
-            // Some(false) = pending, Some(true) = accepted.
-            if *follow_status.peek() != *resource_val {
-                follow_status.set(*resource_val);
-            }
-        }
-    }
-
-    let token_follow = token.clone();
-    let ap_id_follow = ap_id.clone();
-    let on_follow = move |_: Event<MouseData>| {
-        let token = token_follow.clone();
-        let handle_or_url = ap_id_follow.clone();
-        in_flight.set(true);
-        follow_error.set(None);
-        spawn(async move {
-            match follow_person_fn
-                .call(FollowArgs {
-                    token,
-                    handle_or_url,
-                })
-                .await
-            {
-                Ok(()) => {
-                    // Optimistic: show pending (Some(false)) — server will confirm
-                    follow_status.set(Some(Some(false)));
-                    follow_resource.restart();
-                }
-                Err(e) => follow_error.set(Some(e)),
-            }
-            in_flight.set(false);
-        });
-    };
-
-    let token_unfollow = token.clone();
-    let ap_id_unfollow = ap_id.clone();
-    let on_unfollow = move |_: Event<MouseData>| {
-        let token = token_unfollow.clone();
-        let ap_id = ap_id_unfollow.clone();
-        in_flight.set(true);
-        follow_error.set(None);
-        spawn(async move {
-            match unfollow_actor_fn.call(TokenApIdArgs { token, ap_id }).await {
-                Ok(()) => {
-                    follow_status.set(Some(None));
-                    follow_resource.restart();
-                }
-                Err(e) => follow_error.set(Some(e)),
-            }
-            in_flight.set(false);
-        });
-    };
-
-    let copy_handle = handle.clone();
-    let on_copy_handle = move |_: Event<MouseData>| {
-        let h = copy_handle.clone();
-        spawn(async move {
-            if copy_to_clipboard(&h).await.is_ok() {
-                copied.set(true);
-                sleep_ms(1_500).await;
-                copied.set(false);
-            }
-        });
-    };
-
-    rsx! {
-        if !*is_own_sig.read() {
-            if *is_logged_in_sig.read() {
-                match *follow_status.read() {
-                    None => rsx! {
-                        button { class: "btn btn-ghost", disabled: true, "…" }
-                    },
-                    Some(None) => rsx! {
-                        button {
-                            class: "btn btn-primary",
-                            disabled: *in_flight.read(),
-                            onclick: on_follow,
-                            if *in_flight.read() { "Following…" } else { "Follow" }
-                        }
-                    },
-                    Some(Some(false)) => rsx! {
-                        button {
-                            class: format!("btn btn-ghost {}", Styles::follow_pending_btn),
-                            disabled: *in_flight.read(),
-                            onclick: on_unfollow,
-                            if *in_flight.read() { "…" } else { "Pending…" }
-                        }
-                    },
-                    Some(Some(true)) => rsx! {
-                        button {
-                            class: "btn btn-ghost",
-                            disabled: *in_flight.read(),
-                            onclick: on_unfollow,
-                            if *in_flight.read() { "Unfollowing…" } else { "Unfollow" }
-                        }
-                    },
-                }
-            } else {
-                button {
-                    class: if *copied.read() { "btn btn-ghost" } else { "btn btn-primary" },
-                    onclick: on_copy_handle,
-                    if *copied.read() { "✓ Copied!" } else { "Follow" }
-                }
-            }
-            if let Some(err) = follow_error.read().clone() {
-                ErrorBanner { message: err }
             }
         }
     }

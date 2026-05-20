@@ -6,6 +6,7 @@ use crate::{
     KickFollowerFn, RejectFollowRequestFn, TokenApIdArgs, UnfollowActorFn,
     components::{
         avatar::{Avatar, AvatarSize},
+        follow_button::FollowButton,
         person_row::PersonRow,
         remote_follow_card::RemoteFollowCard,
     },
@@ -72,8 +73,8 @@ pub fn PeoplePageView(
 
             if is_logged_in {
                 ConnectionsCard {
-                    token,
-                    following_items,
+                    token: token.clone(),
+                    following_items: following_items.clone(),
                     follower_items,
                     pending_items,
                     on_following_change,
@@ -95,6 +96,19 @@ pub fn PeoplePageView(
                             avatar_url: item.avatar_url.clone(),
                             is_local: item.domain == "jogga.fit",
                             bio: item.bio.clone(),
+                            if is_logged_in {
+                                FollowButton {
+                                    is_logged_in: true,
+                                    token: token.clone(),
+                                    ap_id: item.ap_id.clone(),
+                                    follow_person_fn,
+                                    unfollow_actor_fn,
+                                    initial_follow_status: following_items.iter()
+                                        .find(|f| f.ap_id == item.ap_id)
+                                        .map(|f| f.accepted),
+                                    on_followed: move |_| on_following_change.call(()),
+                                }
+                            }
                         }
                     }
                 }

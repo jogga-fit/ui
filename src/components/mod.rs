@@ -8,6 +8,7 @@ pub mod empty_state;
 pub mod error_banner;
 pub mod exercise_stats_grid;
 pub mod feed_gate;
+pub mod follow_button;
 pub mod like_button;
 pub mod media_carousel;
 pub mod notifications;
