@@ -18,6 +18,9 @@ pub fn ResetPasswordShell(
     password2: Signal<String>,
     loading: bool,
     on_submit: EventHandler<Event<MouseData>>,
+    #[props(optional)] on_verify_otp: Option<EventHandler<String>>,
+    #[props(optional)] otp_verify_error: Option<String>,
+    #[props(default)] otp_pre_verified: bool,
 ) -> Element {
     rsx! {
         if let Some(u) = owner_username {
@@ -78,6 +81,9 @@ pub fn ResetPasswordShell(
                 loading_label: "Verifying…".to_string(),
                 password_label: "Password".to_string(),
                 password2_label: "Confirm password".to_string(),
+                on_verify_otp,
+                otp_verify_error,
+                otp_pre_verified,
             }
             div { class: "auth-footer",
                 Link { to: "/login", "Back to sign in" }
