@@ -2,6 +2,7 @@
 
 use dioxus::prelude::*;
 use jogga_ui::{
+    ActivityVisibility,
     pages::{ActivityComposer, ActivityPreview, HomePageView},
     sleep_ms,
     types::{AuthSignal, AuthUser},
@@ -67,7 +68,7 @@ fn Composer() -> Element {
     let activity_type = use_signal(|| "run".to_string());
     let activity_title = use_signal(String::new);
     let activity_desc = use_signal(String::new);
-    let activity_visibility = use_signal(|| "public".to_string());
+    let activity_visibility = use_signal(|| ActivityVisibility::Public);
     let hidden_stats = use_signal(Vec::<String>::new);
     let mut posting = use_signal(|| false);
     let mut file_name: Signal<Option<String>> = use_signal(|| None);

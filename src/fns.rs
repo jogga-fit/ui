@@ -19,6 +19,16 @@ pub enum ActivityVisibility {
     Private,
 }
 
+impl std::fmt::Display for ActivityVisibility {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Followers => write!(f, "followers"),
+            Self::Private => write!(f, "private"),
+            Self::Public => write!(f, "public"),
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Default)]
 pub struct UploadExerciseMeta {
     pub activity_type: String,

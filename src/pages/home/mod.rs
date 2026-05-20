@@ -3,7 +3,7 @@ use dioxus::prelude::*;
 use dioxus_leaflet::LatLng;
 
 use crate::{
-    DeleteObjectFn, LikeFn, RouteFn, UpdatePostFn,
+    ActivityVisibility, DeleteObjectFn, LikeFn, RouteFn, UpdatePostFn,
     components::{
         empty_state::EmptyState,
         error_banner::ErrorBanner,
@@ -153,7 +153,7 @@ pub fn ActivityComposer(
     mut activity_type: Signal<String>,
     mut activity_title: Signal<String>,
     mut activity_desc: Signal<String>,
-    mut activity_visibility: Signal<String>,
+    mut activity_visibility: Signal<ActivityVisibility>,
     hidden_stats: Signal<Vec<String>>,
     preview: Option<ActivityPreview>,
     pending_images: Vec<PendingImagePreview>,
@@ -319,20 +319,17 @@ pub fn ActivityComposer(
                                     }
                                 }
                                 div { class: StatToggleChipStyles::type_chip_row,
-                                    for (val, label) in [("public", "Public"), ("followers", "Followers"), ("private", "Private")] {
+                                    for visibility in [ActivityVisibility::Public, ActivityVisibility::Followers, ActivityVisibility::Private] {
                                         button {
-                                            key: "{val}",
+                                            key: "{visibility}",
                                             r#type: "button",
-                                            class: if *activity_visibility.read() == val {
-                                                format!("{} {} {}", StatToggleChipStyles::type_chip, StatToggleChipStyles::type_chip_sm, StatToggleChipStyles::type_chip_active)
+                                            class: if *activity_visibility.peek() == visibility {
+                                                "{StatToggleChipStyles::type_chip} {StatToggleChipStyles::type_chip_sm} {StatToggleChipStyles::type_chip_active}"
                                             } else {
-                                                format!("{} {}", StatToggleChipStyles::type_chip, StatToggleChipStyles::type_chip_sm)
+                                                "{StatToggleChipStyles::type_chip} {StatToggleChipStyles::type_chip_sm}"
                                             },
-                                            onclick: {
-                                                let v = val.to_string();
-                                                move |_| activity_visibility.set(v.clone())
-                                            },
-                                            "{label}"
+                                            onclick: move |_| activity_visibility.set(visibility),
+                                            "{visibility}"
                                         }
                                     }
                                 }
