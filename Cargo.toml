@@ -14,6 +14,7 @@ fullstack = ["dioxus/fullstack"]
 base64 = "0.22"
 dioxus = { version = "0.7", features = ["router"] }
 dioxus-icons = { version = "0.1.0", default-features = false }
+tracing = "0.1"
 dioxus-leaflet = { git = "https://github.com/jogga-fit/dioxus-leaflet", branch = "main" }
 dioxus-primitives = { git = "https://github.com/DioxusLabs/components", version = "0.0.1", default-features = false }
 ammonia = "4"

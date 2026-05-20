@@ -91,6 +91,15 @@ pub fn FeedCard(
     let nav = use_navigator();
 
     let mut overlay_open: Signal<Option<usize>> = use_signal(|| None);
+    let content_html = {
+        let content = item.content.clone();
+        use_memo(move || {
+            content
+                .as_deref()
+                .filter(|s| !s.is_empty())
+                .map(ammonia::clean)
+        })
+    };
 
     rsx! {
         div {
@@ -141,11 +150,9 @@ pub fn FeedCard(
                 }
             }
 
-            if let Some(content) = &item.content {
-                if !content.is_empty() {
-                    div { class: "feed-content",
-                        p { dangerous_inner_html: ammonia::clean(content) }
-                    }
+            if let Some(html) = content_html.read().as_deref() {
+                div { class: "feed-content",
+                    p { dangerous_inner_html: "{html}" }
                 }
             }
 
@@ -380,22 +387,21 @@ pub fn EditPostModal(
                             div { class: Styles::edit_image_strip,
                                 {item.image_urls.iter().map(|url| {
                                     let u = url.clone();
-                                    let u2 = url.clone();
-                                    let u3 = url.clone();
+                                    let is_removed = removed_urls.read().contains(&u);
                                     rsx! {
                                         div {
-                                            key: "{u3}",
-                                            class: if removed_urls.read().contains(&u) { format!("{} {}", Styles::edit_thumb_wrap, Styles::edit_thumb_removed) } else { Styles::edit_thumb_wrap.to_string() },
-                                            img { class: Styles::edit_thumb, src: "{u2}", alt: "" }
+                                            key: "{u}",
+                                            class: if is_removed { format!("{} {}", Styles::edit_thumb_wrap, Styles::edit_thumb_removed) } else { Styles::edit_thumb_wrap.to_string() },
+                                            img { class: Styles::edit_thumb, src: "{u}", alt: "" }
                                             button {
                                                 class: "compose-thumb-remove",
                                                 r#type: "button",
-                                                title: if removed_urls.read().contains(&u) { "Restore" } else { "Remove" },
+                                                title: if is_removed { "Restore" } else { "Remove" },
                                                 onclick: move |_| {
                                                     let mut rv = removed_urls.write();
                                                     if rv.contains(&u) { rv.retain(|x| x != &u); } else { rv.push(u.clone()); }
                                                 },
-                                                if removed_urls.read().contains(&u3) { "↩" } else { "×" }
+                                                if is_removed { "↩" } else { "×" }
                                             }
                                         }
                                     }
