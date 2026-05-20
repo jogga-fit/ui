@@ -3,7 +3,8 @@
 use dioxus::prelude::*;
 use jogga_ui::{
     pages::{ActivityComposer, ActivityPreview, HomePageView},
-    types::{AuthSignal, AuthUser, sleep_ms},
+    sleep_ms,
+    types::{AuthSignal, AuthUser},
 };
 
 use crate::mock::{

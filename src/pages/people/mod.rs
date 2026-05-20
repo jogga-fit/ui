@@ -1,4 +1,5 @@
 use dioxus::prelude::*;
+use serde::{Deserialize, Serialize};
 
 use crate::{
     AcceptFollowRequestFn, FollowArgs, FollowPersonFn, FollowRequestArgs, KickFollowerArgs,
@@ -8,8 +9,32 @@ use crate::{
         person_row::PersonRow,
         remote_follow_card::RemoteFollowCard,
     },
-    types::{DirectoryItem, FollowerItem, FollowingItem, sleep_ms},
+    sleep_ms,
+    types::FollowingItem,
 };
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub struct DirectoryItem {
+    pub username: String,
+    pub domain: String,
+    pub ap_id: String,
+    pub display_name: Option<String>,
+    pub bio: Option<String>,
+    pub avatar_url: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub struct FollowerItem {
+    pub ap_id: String,
+    pub username: String,
+    pub domain: String,
+    pub is_local: bool,
+    pub display_name: Option<String>,
+    pub avatar_url: Option<String>,
+    pub accepted: bool,
+    /// Original AP Follow activity id URL — None for pre-migration follows.
+    pub follow_ap_id: Option<String>,
+}
 
 #[css_module("/src/pages/people/style.css")]
 struct Styles;

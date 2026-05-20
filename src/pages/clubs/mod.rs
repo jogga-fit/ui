@@ -1,4 +1,5 @@
 use dioxus::prelude::*;
+use serde::{Deserialize, Serialize};
 
 use crate::{
     DeleteObjectFn, FollowActorFn, FollowArgs, GetClubFeedArgs, GetClubFeedFn, LikeFn, RouteFn,
@@ -7,8 +8,51 @@ use crate::{
         empty_state::EmptyState, error_banner::ErrorBanner, post::FeedCard,
         remote_follow_card::RemoteFollowCard,
     },
-    types::{FollowingItem, sleep_ms},
+    sleep_ms,
+    types::FollowingItem,
 };
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Copy)]
+#[serde(rename_all = "lowercase")]
+pub enum ClubRole {
+    Member,
+    Moderator,
+    Admin,
+    NotMember,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub struct ClubItem {
+    pub handle: String,
+    pub ap_id: String,
+    pub display_name: Option<String>,
+    pub description: Option<String>,
+    pub exclusive: bool,
+    pub member_count: i64,
+    pub my_role: ClubRole,
+}
+
+/// Lightweight club summary used on profile pages.
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub struct ClubSummary {
+    pub handle: String,
+    pub display_name: Option<String>,
+    pub avatar_url: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub struct ClubMemberItem {
+    pub ap_id: String,
+    pub username: String,
+    pub domain: String,
+    #[serde(default)]
+    pub is_local: bool,
+    pub display_name: Option<String>,
+    pub avatar_url: Option<String>,
+    /// `None` = plain member, `"moderator"`, `"admin"`.
+    pub role: Option<ClubRole>,
+    pub accepted: bool,
+}
 
 #[css_module("/src/pages/clubs/style.css")]
 struct Styles;

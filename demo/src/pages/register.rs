@@ -1,7 +1,7 @@
 #![allow(non_snake_case)]
 
 use dioxus::prelude::*;
-use jogga_ui::{pages::RegisterPage as RegisterPageShell, types::sleep_ms};
+use jogga_ui::{pages::RegisterPage as RegisterPageShell, sleep_ms};
 
 #[component]
 pub fn RegisterDemoPage() -> Element {

@@ -1,11 +1,58 @@
 use dioxus::core::Callback;
 
+use serde::{Deserialize, Serialize};
+
+#[cfg(feature = "fullstack")]
+use dioxus::prelude::ServerFnError;
+
 use crate::{
     FutureResult, RoutePoint,
-    types::{
-        ActorInfo, ConnectionsResult, FeedItem, Theme, UploadExerciseMeta, UploadExerciseResult,
-    },
+    types::{ActorInfo, ConnectionsResult, FeedItem, Theme},
 };
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Default, Copy)]
+#[serde(rename_all = "lowercase")]
+pub enum ActivityVisibility {
+    #[default]
+    Public,
+    Followers,
+    Private,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Default)]
+pub struct UploadExerciseMeta {
+    pub activity_type: String,
+    pub visibility: ActivityVisibility,
+    pub title: Option<String>,
+    pub description: Option<String>,
+    pub image_urls: Vec<String>,
+    pub hidden_stats: Vec<String>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub struct UploadExerciseResult {
+    pub id: String,
+    pub ap_id: String,
+}
+
+/// Strip Dioxus server-function error boilerplate.
+#[cfg(feature = "fullstack")]
+pub fn sfn_msg(e: &ServerFnError) -> String {
+    let s = e.to_string();
+    s.strip_prefix("error running server function: ")
+        .and_then(|s| s.strip_suffix(" (details: None)"))
+        .unwrap_or(&s)
+        .to_string()
+}
+
+/// Cross-platform async sleep for UI flows.
+pub async fn sleep_ms(ms: u32) {
+    #[cfg(target_arch = "wasm32")]
+    gloo_timers::future::TimeoutFuture::new(ms).await;
+
+    #[cfg(not(target_arch = "wasm32"))]
+    tokio::time::sleep(std::time::Duration::from_millis(u64::from(ms))).await;
+}
 
 pub struct TokenApIdArgs {
     pub token: String,

@@ -3,11 +3,16 @@ use jogga_ui::{
     GetActorConnectionsArgs, GetActorPostsArgs, KickFollowerArgs, MoveAccountArgs,
     PrivacySettingsArgs, RoutePoint, SetThemeArgs, TokenApIdArgs, UpdatePostArgs,
     UpdateProfileArgs, UploadAvatarArgs,
-    components::notifications::{NotificationItem, NotificationKind},
+    components::{
+        notifications::{NotificationItem, NotificationKind},
+        post::ThreadItem,
+    },
     exercise::ExerciseType,
+    pages::people::{DirectoryItem, FollowerItem},
+    sleep_ms,
     types::{
-        ActorInfo, ConnectionItem, ConnectionsResult, DirectoryItem, ExerciseStats, FeedItem,
-        FollowerItem, FollowingItem, MeResult, ObjectType, Theme, ThreadItem, sleep_ms,
+        ActorInfo, ConnectionItem, ConnectionsResult, ExerciseStats, FeedItem, FollowingItem,
+        MeResult, ObjectType, Theme,
     },
 };
 

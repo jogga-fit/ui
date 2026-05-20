@@ -3,7 +3,7 @@
 use dioxus::prelude::*;
 use jogga_ui::{
     components::{error_banner::ErrorBanner, otp_password_form::OtpPasswordForm},
-    types::sleep_ms,
+    sleep_ms,
 };
 
 #[component]

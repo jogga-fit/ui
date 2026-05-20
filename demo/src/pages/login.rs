@@ -3,7 +3,8 @@
 use dioxus::prelude::*;
 use jogga_ui::{
     pages::LoginPage as LoginPageShell,
-    types::{AuthSignal, AuthUser, sleep_ms},
+    sleep_ms,
+    types::{AuthSignal, AuthUser},
 };
 
 #[component]

@@ -1,4 +1,5 @@
 use dioxus::prelude::*;
+use serde::{Deserialize, Serialize};
 
 pub mod feed_card;
 pub use feed_card::{EditPostModal, FeedCard};
@@ -11,8 +12,20 @@ use crate::{
         media_carousel::MediaCollage, post_menu::PostMenu,
     },
     format::format_published,
-    types::{FeedItem, ThreadItem},
+    types::FeedItem,
 };
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub struct ThreadItem {
+    pub ap_id: String,
+    pub author_username: String,
+    pub author_avatar_url: Option<String>,
+    pub content: Option<String>,
+    pub published: String,
+    pub like_count: i64,
+    pub viewer_has_liked: bool,
+    pub viewer_is_owner: bool,
+}
 
 #[css_module("/src/components/post/style.css")]
 struct Styles;

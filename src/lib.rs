@@ -13,8 +13,6 @@ pub mod types;
 
 pub use fns::*;
 pub use hooks::use_client_only;
-#[cfg(feature = "fullstack")]
-pub use types::sfn_msg;
 
 pub type FutureResult<F> = Pin<Box<dyn Future<Output = Result<F, String>>>>;
 pub type RoutePoint = (f64, f64, Option<f64>);

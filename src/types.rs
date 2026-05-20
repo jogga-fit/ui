@@ -1,5 +1,3 @@
-#[cfg(feature = "fullstack")]
-use dioxus::prelude::ServerFnError;
 use dioxus::prelude::Signal;
 use serde::{Deserialize, Deserializer, Serialize};
 
@@ -76,16 +74,6 @@ pub struct MeResult {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
-pub struct DirectoryItem {
-    pub username: String,
-    pub domain: String,
-    pub ap_id: String,
-    pub display_name: Option<String>,
-    pub bio: Option<String>,
-    pub avatar_url: Option<String>,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct FollowingItem {
     pub ap_id: String,
     pub username: String,
@@ -94,19 +82,6 @@ pub struct FollowingItem {
     pub display_name: Option<String>,
     pub avatar_url: Option<String>,
     pub accepted: bool,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
-pub struct FollowerItem {
-    pub ap_id: String,
-    pub username: String,
-    pub domain: String,
-    pub is_local: bool,
-    pub display_name: Option<String>,
-    pub avatar_url: Option<String>,
-    pub accepted: bool,
-    /// Original AP Follow activity id URL — None for pre-migration follows.
-    pub follow_ap_id: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
@@ -198,34 +173,6 @@ pub struct FeedItem {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
-pub struct ThreadItem {
-    pub ap_id: String,
-    pub author_username: String,
-    pub author_avatar_url: Option<String>,
-    pub content: Option<String>,
-    pub published: String,
-    pub like_count: i64,
-    pub viewer_has_liked: bool,
-    pub viewer_is_owner: bool,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Default)]
-pub struct UploadExerciseMeta {
-    pub activity_type: String,
-    pub visibility: String,
-    pub title: Option<String>,
-    pub description: Option<String>,
-    pub image_urls: Vec<String>,
-    pub hidden_stats: Vec<String>,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
-pub struct UploadExerciseResult {
-    pub id: String,
-    pub ap_id: String,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct ConnectionItem {
     pub ap_id: String,
     pub username: String,
@@ -240,40 +187,6 @@ pub struct ConnectionsResult {
     pub visible: bool,
     pub following: Vec<ConnectionItem>,
     pub followers: Vec<ConnectionItem>,
-}
-
-/// Lightweight club summary used on profile pages.
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
-pub struct ClubSummary {
-    pub handle: String,
-    pub display_name: Option<String>,
-    pub avatar_url: Option<String>,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
-pub struct ClubItem {
-    pub handle: String,
-    pub ap_id: String,
-    pub display_name: Option<String>,
-    pub description: Option<String>,
-    pub exclusive: bool,
-    pub member_count: i64,
-    /// `None` = not a member, `"member"` = joined, `"moderator"`, `"admin"`.
-    pub my_role: Option<String>,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
-pub struct ClubMemberItem {
-    pub ap_id: String,
-    pub username: String,
-    pub domain: String,
-    #[serde(default)]
-    pub is_local: bool,
-    pub display_name: Option<String>,
-    pub avatar_url: Option<String>,
-    /// `None` = plain member, `"moderator"`, `"admin"`.
-    pub role: Option<String>,
-    pub accepted: bool,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
@@ -292,22 +205,3 @@ pub type ThemeSignal = Signal<Theme>;
 
 /// Migration modal — `Some(profile)` while open, `None` while closed.
 pub type MigrationModalSignal = Signal<Option<MeResult>>;
-
-/// Strip Dioxus server-function error boilerplate.
-#[cfg(feature = "fullstack")]
-pub fn sfn_msg(e: &ServerFnError) -> String {
-    let s = e.to_string();
-    s.strip_prefix("error running server function: ")
-        .and_then(|s| s.strip_suffix(" (details: None)"))
-        .unwrap_or(&s)
-        .to_string()
-}
-
-/// Cross-platform async sleep for UI flows.
-pub async fn sleep_ms(ms: u32) {
-    #[cfg(target_arch = "wasm32")]
-    gloo_timers::future::TimeoutFuture::new(ms).await;
-
-    #[cfg(not(target_arch = "wasm32"))]
-    tokio::time::sleep(std::time::Duration::from_millis(u64::from(ms))).await;
-}

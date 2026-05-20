@@ -20,7 +20,8 @@ use crate::{
         CropSelection, clear_file_input, compress_avatar_from_input,
         prepare_selected_image_from_input, revoke_object_url,
     },
-    types::{ActorInfo, AuthSignal, ConnectionItem, ConnectionsResult, sleep_ms},
+    sleep_ms,
+    types::{ActorInfo, AuthSignal, ConnectionItem, ConnectionsResult},
 };
 
 #[component]
@@ -233,8 +234,16 @@ fn ProfileCard(
             saved.set(false);
             error.set(None);
             spawn(async move {
-                let display_name = if display_name.trim().is_empty() { None } else { Some(display_name) };
-                let bio = if bio.trim().is_empty() { None } else { Some(bio) };
+                let display_name = if display_name.trim().is_empty() {
+                    None
+                } else {
+                    Some(display_name)
+                };
+                let bio = if bio.trim().is_empty() {
+                    None
+                } else {
+                    Some(bio)
+                };
                 match update_profile_fn
                     .call(UpdateProfileArgs {
                         token,

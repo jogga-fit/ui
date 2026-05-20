@@ -4,7 +4,8 @@ use dioxus::prelude::*;
 use jogga_ui::{
     FutureResult, GetClubFeedArgs,
     pages::{ClubDetailPageView, ClubsPageView},
-    types::{AuthSignal, FeedItem, sleep_ms},
+    sleep_ms,
+    types::{AuthSignal, FeedItem},
 };
 
 use crate::mock::{
