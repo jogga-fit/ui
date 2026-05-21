@@ -10,7 +10,7 @@ struct Styles;
 #[component]
 pub fn DialogRoot(props: DialogRootProps) -> Element {
     let base = attributes!(div {
-        class: format!("{} modal-backdrop", Styles::dx_dialog_backdrop),
+        class: "{Styles::dx_dialog_backdrop} modal-backdrop",
     });
     let merged = merge_attributes(vec![base, props.attributes]);
 
@@ -29,13 +29,14 @@ pub fn DialogRoot(props: DialogRootProps) -> Element {
 
 #[component]
 pub fn DialogContent(props: DialogContentProps) -> Element {
-    let default_class = format!("{} modal-card", Styles::dx_dialog);
-    let class = props
-        .class
-        .clone()
-        .map(|c| format!("{c} modal-card"))
-        .unwrap_or(default_class);
-    let base = attributes!(div { class });
+    let base = attributes!(div {
+        class: "modal-card",
+        class: if let Some(class) = props.class {
+            class
+        } else {
+            Styles::dx_dialog.to_string()
+        }
+    });
     let merged = merge_attributes(vec![base, props.attributes]);
 
     rsx! {

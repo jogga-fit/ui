@@ -17,16 +17,11 @@ pub fn ExerciseStatsGrid(
     #[props(default)] max_power_w: Option<f64>,
     #[props(default)] normalized_power_w: Option<f64>,
     #[props(default)] avg_cadence_rpm: Option<f64>,
-    #[props(default)] extra_class: String,
+    #[props(optional)] extra_class: Option<String>,
 ) -> Element {
-    let class = if extra_class.is_empty() {
-        Styles::stats_grid.to_string()
-    } else {
-        format!("{} {extra_class}", Styles::stats_grid)
-    };
-
     rsx! {
-        div { class: "{class}",
+        div { class: "{Styles::stats_grid}",
+            class: if let Some(extra_class) = &extra_class { "{extra_class}" },
             if let Some(d) = distance_m {
                 if d > 0.0 {
                     div { class: Styles::stat_cell,

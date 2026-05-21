@@ -477,7 +477,8 @@ pub fn MigrationModal(
                         // Wizard step indicators
                         div { class: Styles::wizard_steps_bar,
                             div {
-                                class: if *step.read() == 1 { format!("{} active", Styles::wizard_step) } else { format!("{} done", Styles::wizard_step) },
+                                class: "{Styles::wizard_step}",
+                                class: if *step.read() == 1 { "{Styles::active}" } else { "{Styles::done}" },
                                 "data-testid": "migration-step-alias",
                                 role: "button",
                                 onclick: move |_| step.set(1),
@@ -492,7 +493,8 @@ pub fn MigrationModal(
                             }
                             div { class: Styles::wizard_step_connector }
                             div {
-                                class: if *step.read() == 2 { format!("{} active", Styles::wizard_step) } else { format!("{} inactive", Styles::wizard_step) },
+                                class: "{Styles::wizard_step}",
+                                class: if *step.read() == 2 { "{Styles::active}" } else { "{Styles::inactive}" },
                                 "data-testid": "migration-step-move",
                                 div { class: Styles::wizard_step_circle, "2" }
                                 span { class: Styles::wizard_step_label, "Move account" }

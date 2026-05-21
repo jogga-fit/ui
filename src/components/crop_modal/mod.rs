@@ -208,7 +208,7 @@ pub fn CropModal(
 
                 div { class: Styles::cm_footer,
                     button {
-                        class: format!("{} {}", Styles::cm_btn, Styles::cm_btn_apply),
+                        class: "{Styles::cm_btn} {Styles::cm_btn_apply}",
                         onclick: on_apply_click,
                         "Apply"
                     }

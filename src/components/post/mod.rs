@@ -49,15 +49,12 @@ pub fn PostCardHeader(
     deleting: bool,
     #[props(default)] on_edit: Option<EventHandler<()>>,
     on_delete: EventHandler<()>,
-    #[props(default)] extra_class: String,
+    #[props(optional)] extra_class: Option<String>,
 ) -> Element {
-    let class = if extra_class.is_empty() {
-        "feed-card-header".to_string()
-    } else {
-        format!("feed-card-header {extra_class}")
-    };
     rsx! {
-        div { class: "{class}",
+        div {
+            class: "feed-card-header",
+            class: if let Some(extra_class) = &extra_class { "{extra_class}" },
             div { class: Styles::feed_actor_col,
                 ActorLink {
                     is_local: actor_is_local,
@@ -249,7 +246,7 @@ pub fn ExerciseCard(
                 deleting: *deleting.read(),
                 on_edit: move |_| on_edit_open.call(()),
                 on_delete: do_delete,
-                extra_class: "edc-section".to_string(),
+                extra_class: "edc-section",
             }
 
             div { class: format!("{} edc-section", Styles::exercise_detail_header),
@@ -275,7 +272,7 @@ pub fn ExerciseCard(
                 max_power_w: item.stats.max_power_w,
                 normalized_power_w: item.stats.normalized_power_w,
                 avg_cadence_rpm: item.stats.avg_cadence_rpm,
-                extra_class: "stats-grid-detail edc-section".to_string(),
+                extra_class: "stats-grid-detail edc-section",
             }
 
             if let Some(ref content) = item.content {
