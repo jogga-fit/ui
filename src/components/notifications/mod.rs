@@ -84,7 +84,6 @@ pub fn notification_time(created_at: &str) -> String {
 #[component]
 pub fn NotificationList(
     notifications: Vec<NotificationItem>,
-    mut dismissed_ids: Signal<Vec<String>>,
     #[props(default)] on_dismiss: Option<EventHandler<String>>,
 ) -> Element {
     if notifications.is_empty() {
@@ -101,7 +100,6 @@ pub fn NotificationList(
             NotificationRow {
                 key: "{item.id}",
                 item,
-                dismissed_ids,
                 on_dismiss,
             }
         }
@@ -111,7 +109,6 @@ pub fn NotificationList(
 #[component]
 pub fn NotificationRow(
     item: NotificationItem,
-    mut dismissed_ids: Signal<Vec<String>>,
     #[props(default)] on_dismiss: Option<EventHandler<String>>,
 ) -> Element {
     let item_id = item.id.clone();
@@ -152,12 +149,8 @@ pub fn NotificationRow(
                 "aria-label": "Dismiss notification",
                 onclick: move |event| {
                     event.stop_propagation();
-                    let id = item_id.clone();
-                    if !dismissed_ids.read().iter().any(|existing| existing == &id) {
-                        dismissed_ids.write().push(id.clone());
-                    }
                     if let Some(handler) = on_dismiss {
-                        handler.call(id);
+                        handler.call(item_id.clone());
                     }
                 },
                 i { class: "ph ph-x" }

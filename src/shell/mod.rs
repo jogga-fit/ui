@@ -28,7 +28,7 @@ pub fn AppShell(
 ) -> Element {
     let mut account_open = use_signal(|| false);
     let mut notifications_open = use_signal(|| false);
-    let dismissed_notification_ids: Signal<Vec<String>> = use_signal(Vec::new);
+    let mut dismissed_notification_ids: Signal<Vec<String>> = use_signal(Vec::new);
 
     let is_logged_in = user.is_some();
     let display_initial = user
@@ -120,8 +120,12 @@ pub fn AppShell(
                                 }
                                 NotificationList {
                                     notifications: visible_notifications.read().clone(),
-                                    dismissed_ids: dismissed_notification_ids,
-                                    on_dismiss: on_notification_dismiss,
+                                    on_dismiss: move |id: String| {
+                                        dismissed_notification_ids.push(id.clone());
+                                        if let Some(cb) = on_notification_dismiss {
+                                            cb.call(id);
+                                        }
+                                    },
                                 }
                             }
                         }
@@ -278,8 +282,12 @@ pub fn AppShell(
                     div { class: NotificationStyles::notification_sheet_body,
                         NotificationList {
                             notifications: visible_notifications.read().clone(),
-                            dismissed_ids: dismissed_notification_ids,
-                            on_dismiss: on_notification_dismiss,
+                            on_dismiss: move |id: String| {
+                                dismissed_notification_ids.push(id.clone());
+                                if let Some(cb) = on_notification_dismiss {
+                                    cb.call(id);
+                                }
+                            },
                         }
                     }
                 }
