@@ -202,6 +202,15 @@ pub fn ExerciseCard(
     let delete_ap_id = item.object_ap_id.clone();
     let delete_tok = token.clone();
     let is_owner = item.viewer_is_owner;
+    let content_html = {
+        let content = item.content.clone();
+        use_memo(move || {
+            content
+                .as_deref()
+                .filter(|s| !s.is_empty())
+                .map(ammonia::clean)
+        })
+    };
 
     let do_delete = move |_| {
         let token = match delete_tok.clone() {
@@ -275,11 +284,9 @@ pub fn ExerciseCard(
                 extra_class: "stats-grid-detail edc-section",
             }
 
-            if let Some(ref content) = item.content {
-                if !content.is_empty() {
-                    div { class: "feed-content edc-section",
-                        p { dangerous_inner_html: ammonia::clean(content) }
-                    }
+            if let Some(html) = content_html.read().as_deref() {
+                div { class: "feed-content edc-section",
+                    p { dangerous_inner_html: "{html}" }
                 }
             }
 
@@ -312,6 +319,15 @@ pub fn ReplyItem(
     let delete_ap_id = item.ap_id.clone();
     let delete_tok = token.clone();
     let is_owner = item.viewer_is_owner;
+    let content_html = {
+        let content = item.content.clone();
+        use_memo(move || {
+            content
+                .as_deref()
+                .filter(|s| !s.is_empty())
+                .map(ammonia::clean)
+        })
+    };
 
     let do_delete = move |_| {
         let token = match delete_tok.clone() {
@@ -343,11 +359,9 @@ pub fn ReplyItem(
                     }
                 }
             }
-            if let Some(content) = &item.content {
-                if !content.is_empty() {
-                    div { class: "feed-content",
-                        p { dangerous_inner_html: ammonia::clean(content) }
-                    }
+            if let Some(html) = content_html.read().as_deref() {
+                div { class: "feed-content",
+                    p { dangerous_inner_html: "{html}" }
                 }
             }
             div { class: "feed-card-actions",
