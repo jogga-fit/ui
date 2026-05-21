@@ -281,7 +281,11 @@ pub fn ActivityComposer(
                             StatToggleChips {
                                 has_map: has_route,
                                 stats: preview.present_stats.clone(),
-                                hidden_stats,
+                                hidden_stats: hidden_stats.read().clone(),
+                                on_toggle: move |k: String| {
+                                    let mut hs = hidden_stats.write();
+                                    if hs.contains(&k) { hs.retain(|s| s != &k); } else { hs.push(k); }
+                                },
                             }
                         }
                     }

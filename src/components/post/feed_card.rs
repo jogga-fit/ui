@@ -247,7 +247,7 @@ pub fn EditPostModal(
 
     let mut title = use_signal(|| item.title.clone().unwrap_or_default());
     let mut content = use_signal(|| item.content.clone().unwrap_or_default());
-    let hidden_stats: Signal<Vec<String>> = use_signal(|| item.hidden_stats.clone());
+    let mut hidden_stats: Signal<Vec<String>> = use_signal(|| item.hidden_stats.clone());
     let mut removed_urls: Signal<Vec<String>> = use_signal(Vec::new);
     let mut saving = use_signal(|| false);
     let mut error: Signal<Option<String>> = use_signal(|| None);
@@ -377,7 +377,11 @@ pub fn EditPostModal(
                         StatToggleChips {
                             has_map,
                             stats: relevant_stats,
-                            hidden_stats,
+                            hidden_stats: hidden_stats.read().clone(),
+                            on_toggle: move |k: String| {
+                                let mut hs = hidden_stats.write();
+                                if hs.contains(&k) { hs.retain(|s| s != &k); } else { hs.push(k); }
+                            },
                         }
                     }
 

@@ -364,7 +364,7 @@ fn DemoPage() -> Element {
     let mut setting_on = use_signal(|| true);
     let mut show_carousel = use_signal(|| false);
     let mut show_edit_modal = use_signal(|| false);
-    let hidden_stats = use_signal(Vec::<String>::new);
+    let mut hidden_stats = use_signal(Vec::<String>::new);
 
     rsx! {
         div { class: "demo-root",
@@ -467,7 +467,15 @@ fn DemoPage() -> Element {
             }
 
             Section { title: "Stat Toggle Chips",
-                StatToggleChips { has_map: true, stats: STAT_TOGGLES.iter().map(|(k, v)| (k.to_string(), v.to_string())).collect(), hidden_stats }
+                StatToggleChips {
+                    has_map: true,
+                    stats: STAT_TOGGLES.iter().map(|(k, v)| (k.to_string(), v.to_string())).collect(),
+                    hidden_stats: hidden_stats.read().clone(),
+                    on_toggle: move |k: String| {
+                        let mut hs = hidden_stats.write();
+                        if hs.contains(&k) { hs.retain(|s| s != &k); } else { hs.push(k); }
+                    },
+                }
                 if !hidden_stats.read().is_empty() {
                     p { class: "demo-muted", "hidden: {hidden_stats.read():?}" }
                 }

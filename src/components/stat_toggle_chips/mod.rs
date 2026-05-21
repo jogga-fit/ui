@@ -18,7 +18,8 @@ const MAP_KEY: &str = "map";
 pub fn StatToggleChips(
     has_map: bool,
     stats: Vec<(String, String)>,
-    hidden_stats: Signal<Vec<String>>,
+    hidden_stats: Vec<String>,
+    on_toggle: EventHandler<String>,
 ) -> Element {
     rsx! {
         div { class: "compose-field-row",
@@ -26,21 +27,13 @@ pub fn StatToggleChips(
             div { class: Styles::type_chip_row,
                 if has_map {
                     {
-                        let map_hidden = hidden_stats.read().contains(&MAP_KEY.to_string());
+                        let map_hidden = hidden_stats.contains(&MAP_KEY.to_string());
                         rsx! {
                             button {
                                 r#type: "button",
                                 class: "{Styles::type_chip}",
                                 class: if map_hidden { "{Styles::type_chip_active}" },
-                                onclick: move |_| {
-                                    let mut hs = hidden_stats.write();
-                                    let k = MAP_KEY.to_string();
-                                    if hs.contains(&k) {
-                                        hs.retain(|s| s != &k);
-                                    } else {
-                                        hs.push(k);
-                                    }
-                                },
+                                onclick: move |_| on_toggle.call(MAP_KEY.to_string()),
                                 i { class: "ph ph-map-trifold" }
                                 " Map"
                             }
@@ -48,22 +41,14 @@ pub fn StatToggleChips(
                     }
                 }
                 {stats.into_iter().map(|(key, label)| {
-                    let k = key.clone();
-                    let k2 = key.clone();
+                    let is_hidden = hidden_stats.contains(&key);
                     rsx! {
                         button {
-                            key: "{k2}",
+                            key: "{key}",
                             r#type: "button",
                             class: "{Styles::type_chip}",
-                            class: if hidden_stats.read().contains(&k) { "{Styles::type_chip_active}" },
-                            onclick: move |_| {
-                                let mut hs = hidden_stats.write();
-                                if hs.contains(&k2) {
-                                    hs.retain(|s| s != &k2);
-                                } else {
-                                    hs.push(k2.clone());
-                                }
-                            },
+                            class: if is_hidden { "{Styles::type_chip_active}" },
+                            onclick: move |_| on_toggle.call(key.clone()),
                             "{label}"
                         }
                     }
