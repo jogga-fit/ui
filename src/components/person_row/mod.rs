@@ -12,7 +12,6 @@ pub fn PersonRow(
     #[props(default)] display_name: Option<String>,
     #[props(default)] avatar_url: Option<String>,
     is_local: bool,
-    #[props(default)] bio: Option<String>,
     #[props(default)] children: Element,
 ) -> Element {
     let name = display_name.as_deref().unwrap_or(&username).to_string();
@@ -31,9 +30,6 @@ pub fn PersonRow(
                 div { class: Styles::person_row_info,
                     span { class: Styles::person_row_name, "{name}" }
                     span { class: Styles::person_row_handle, "{handle}" }
-                    if let Some(bio_text) = bio {
-                        span { class: Styles::person_row_bio, "{bio_text}" }
-                    }
                 }
             }
             {children}

@@ -95,7 +95,6 @@ pub fn PeoplePageView(
                             display_name: item.display_name.clone(),
                             avatar_url: item.avatar_url.clone(),
                             is_local: item.domain == "jogga.fit",
-                            bio: item.bio.clone(),
                             if is_logged_in {
                                 FollowButton {
                                     is_logged_in: true,
