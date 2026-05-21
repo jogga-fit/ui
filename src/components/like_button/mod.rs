@@ -1,3 +1,5 @@
+use std::ops::{AddAssign, SubAssign};
+
 use dioxus::prelude::*;
 
 use crate::{LikeFn, TokenApIdArgs};
@@ -33,21 +35,20 @@ pub fn LikeButton(
         let ap_id = object_ap_id.clone();
         let currently_liked = *liked.peek();
         liked.set(!currently_liked);
-        let new_count = *like_count.peek() + if currently_liked { -1 } else { 1 };
-        like_count.set(new_count);
-        liking.set(true);
+        let (change, action) = if currently_liked {
+            (-1, unlike_fn)
+        } else {
+            (1, like_fn)
+        };
+        like_count.add_assign(change);
+        liking.toggle();
+        let args = TokenApIdArgs { token, ap_id };
         spawn(async move {
-            let result = if currently_liked {
-                unlike_fn.call(TokenApIdArgs { token, ap_id }).await
-            } else {
-                like_fn.call(TokenApIdArgs { token, ap_id }).await
-            };
-            if result.is_err() {
+            if action.call(args).await.is_err() {
                 liked.set(currently_liked);
-                let rolled_back = *like_count.peek() + if currently_liked { 1 } else { -1 };
-                like_count.set(rolled_back);
+                like_count.sub_assign(change);
             }
-            liking.set(false);
+            liking.toggle();
         });
     };
 
@@ -59,10 +60,13 @@ pub fn LikeButton(
             onclick: toggle_like,
             title: if *liked.read() { "Unlike" } else { "Like" },
             aria_label: if *liked.read() { "Unlike" } else { "Like" },
-            if *liked.read() {
-                i { class: format!("ph-fill ph-heart {}", Styles::like_heart) }
-            } else {
-                i { class: format!("ph ph-heart {}", Styles::like_heart) }
+            i {
+                class: "{Styles::like_heart} ph-heart",
+                class: if *liked.read() {
+                    "ph-fill"
+                } else {
+                    "ph"
+                },
             }
             if *like_count.read() > 0 {
                 span { class: Styles::like_count, "{like_count}" }
