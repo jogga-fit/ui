@@ -187,7 +187,7 @@ pub fn FeedCard(
                 LikeButton {
                     object_ap_id: item.object_ap_id.clone(),
                     token: token.clone(),
-                    initial_liked: item.viewer_has_liked,
+                    initial_liked: item.viewer_has_liked && token.is_some(),
                     initial_count: item.like_count,
                     like_fn,
                     unlike_fn,
