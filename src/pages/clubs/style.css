@@ -492,32 +492,6 @@
     margin-bottom: 1rem;
 }
 
-/* Profile card cover strip */
-.club-profile-cover {
-    height: 64px;
-    background: linear-gradient(
-        135deg,
-        var(--bg-card, #1a1d27) 0%,
-        #1f1520 40%,
-        #221318 70%,
-        var(--bg-card, #1a1d27) 100%
-    );
-    position: relative;
-    overflow: hidden;
-}
-
-.club-profile-cover::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        135deg,
-        rgba(193, 68, 14, 0.1) 0%,
-        rgba(232, 116, 42, 0.06) 50%,
-        transparent 100%
-    );
-}
-
 /* Club feed */
 .club-feed {
     margin-top: 1rem;

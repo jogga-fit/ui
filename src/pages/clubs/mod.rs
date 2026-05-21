@@ -596,7 +596,6 @@ fn ClubProfileCard(
 ) -> Element {
     rsx! {
         div { class: "card profile-card",
-            div { class: Styles::club_profile_cover }
             div { class: "profile-header-row",
                 div { class: "avatar avatar-lg {Styles::club_avatar}", "{initial}" }
                 div { class: "profile-header-actions",
