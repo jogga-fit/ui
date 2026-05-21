@@ -10,13 +10,10 @@ use crate::mock::{
 
 #[component]
 pub fn PostPage() -> Element {
-    let edit_open = use_signal(|| false);
-
     rsx! {
         ExerciseThreadPage {
             thread: Some(Ok((run_item(), vec![reply_item(), reply_item_own()]))),
             token: Some("demo-token".to_string()),
-            edit_open,
             on_parent_deleted: move |_| {},
             on_thread_refresh: move |_| {},
             delete_fn: Callback::new(mock_delete),

@@ -89,7 +89,6 @@ pub fn PostCardHeader(
 pub fn ExerciseThreadPage(
     thread: Option<Result<(FeedItem, Vec<ThreadItem>), String>>,
     token: Option<String>,
-    mut edit_open: Signal<bool>,
     on_parent_deleted: EventHandler<()>,
     on_thread_refresh: EventHandler<()>,
     delete_fn: DeleteObjectFn,
@@ -99,6 +98,7 @@ pub fn ExerciseThreadPage(
     update_fn: UpdatePostFn,
     create_reply_fn: CreateReplyFn,
 ) -> Element {
+    let mut edit_open = use_signal(|| false);
     rsx! {
         div { class: "page-content thread-page",
             div { class: "thread-back",
