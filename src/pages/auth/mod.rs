@@ -13,11 +13,8 @@ pub fn ResetPasswordShell(
     rerequest_sent: bool,
     rerequest_error: Option<String>,
     on_rerequest: EventHandler<Event<MouseData>>,
-    otp: Signal<String>,
-    password: Signal<String>,
-    password2: Signal<String>,
     loading: bool,
-    on_submit: EventHandler<Event<MouseData>>,
+    on_submit: EventHandler<(String, String)>,
     #[props(optional)] on_verify_otp: Option<EventHandler<String>>,
     #[props(optional)] otp_verify_error: Option<String>,
     #[props(default)] otp_pre_verified: bool,
@@ -72,9 +69,6 @@ pub fn ResetPasswordShell(
             }
         } else {
             OtpPasswordForm {
-                otp,
-                password,
-                password2,
                 loading,
                 on_submit,
                 submit_label: "Continue".to_string(),

@@ -13,11 +13,8 @@ enum OtpPhase {
 
 #[component]
 pub fn OtpPasswordForm(
-    mut otp: Signal<String>,
-    mut password: Signal<String>,
-    mut password2: Signal<String>,
     loading: bool,
-    on_submit: EventHandler<Event<MouseData>>,
+    on_submit: EventHandler<(String, String)>,
     submit_label: String,
     loading_label: String,
     password_label: String,
@@ -35,6 +32,9 @@ pub fn OtpPasswordForm(
     #[props(default)]
     otp_pre_verified: bool,
 ) -> Element {
+    let mut otp = use_signal(String::new);
+    let mut password = use_signal(String::new);
+    let mut password2 = use_signal(String::new);
     let mut phase = use_signal(|| OtpPhase::Enter);
     let otp_len = otp.read().len();
     let in_enter_phase = !otp_pre_verified && *phase.read() == OtpPhase::Enter;
@@ -132,7 +132,7 @@ pub fn OtpPasswordForm(
             button {
                 class: "btn btn-primary btn-full",
                 disabled: loading,
-                onclick: on_submit,
+                onclick: move |_| on_submit.call((password.read().clone(), password2.read().clone())),
                 if loading { "{loading_label}" } else { "{submit_label}" }
             }
         }

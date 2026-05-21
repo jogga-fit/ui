@@ -10,14 +10,9 @@ use jogga_ui::{
 pub fn ResetPasswordDemoPage() -> Element {
     let mut loading = use_signal(|| false);
     let mut error = use_signal(|| Option::<String>::None);
-    let otp = use_signal(String::new);
-    let password = use_signal(String::new);
-    let password2 = use_signal(String::new);
     let nav = use_navigator();
 
-    let on_submit = move |_: Event<MouseData>| {
-        let pwd = password.read().clone();
-        let pwd2 = password2.read().clone();
+    let on_submit = move |(pwd, pwd2): (String, String)| {
         if pwd != pwd2 {
             error.set(Some("Passwords don't match.".into()));
             return;
@@ -40,9 +35,6 @@ pub fn ResetPasswordDemoPage() -> Element {
             ErrorBanner { message: err.clone() }
         }
         OtpPasswordForm {
-            otp,
-            password,
-            password2,
             loading: *loading.read(),
             on_submit,
             submit_label: "Continue".to_string(),
