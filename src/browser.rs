@@ -3,6 +3,12 @@ mod imp {
     use wasm_bindgen_futures::JsFuture;
     use web_sys::window;
 
+    pub fn open_url(url: &str) {
+        if let Some(w) = window() {
+            let _ = w.open_with_url_and_target(url, "_blank");
+        }
+    }
+
     pub async fn copy_to_clipboard(text: &str) -> Result<(), String> {
         let navigator = window()
             .ok_or_else(|| "window unavailable".to_string())?
@@ -42,6 +48,8 @@ mod imp {
     pub fn mark_document_hydrated() -> Result<(), String> {
         Ok(())
     }
+
+    pub fn open_url(_url: &str) {}
 }
 
 #[cfg(not(target_arch = "wasm32"))]

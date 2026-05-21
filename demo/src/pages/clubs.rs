@@ -9,8 +9,8 @@ use jogga_ui::{
 };
 
 use crate::mock::{
-    mock_clubs, mock_delete, mock_follow_actor, mock_like, mock_route, mock_unfollow_actor,
-    mock_update_post, ride_item,
+    mock_clubs, mock_delete, mock_follow_actor, mock_like, mock_route, mock_server_clubs,
+    mock_unfollow_actor, mock_update_post, ride_item,
 };
 
 #[component]
@@ -31,6 +31,7 @@ pub fn ClubsDemoPage() -> Element {
             follow_actor_fn: Callback::new(mock_follow_actor),
             unfollow_actor_fn: Callback::new(mock_unfollow_actor),
             is_logged_in,
+            server_clubs: mock_server_clubs(),
         }
     }
 }
@@ -45,6 +46,7 @@ pub fn mock_get_club_feed(_args: GetClubFeedArgs) -> FutureResult<Vec<FeedItem>>
 #[component]
 pub fn ClubDetailPage(handle: String) -> Element {
     let auth = use_context::<AuthSignal>();
+    let is_logged_in = auth.read().is_some();
     let token = auth
         .read()
         .as_ref()
@@ -53,16 +55,27 @@ pub fn ClubDetailPage(handle: String) -> Element {
     let nav = use_navigator();
 
     let club_handle = handle.clone();
-    let club = mock_clubs().into_iter().find(|c| {
-        let full_handle = format!("{}@{}", c.username, c.domain);
-        c.username == club_handle || full_handle == club_handle
-    });
+    let club = if is_logged_in {
+        mock_clubs().into_iter().find(|c| {
+            let full_handle = format!("{}@{}", c.username, c.domain);
+            c.username == club_handle || full_handle == club_handle
+        })
+    } else {
+        None
+    };
+
+    let server_club = mock_server_clubs()
+        .into_iter()
+        .find(|c| c.handle == club_handle);
+    let description = server_club.as_ref().and_then(|c| c.description.clone());
 
     rsx! {
         ClubDetailPageView {
             handle: handle.clone(),
             club: Some(Ok(club)),
             token,
+            description,
+            server_club,
             on_back: move |_| { nav.push("/clubs"); },
             on_left: move |_| { nav.push("/clubs"); },
             get_club_feed_fn: Callback::new(mock_get_club_feed),

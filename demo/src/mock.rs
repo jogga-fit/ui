@@ -8,7 +8,10 @@ use jogga_ui::{
         post::ThreadItem,
     },
     exercise::ExerciseType,
-    pages::people::{DirectoryItem, FollowerItem},
+    pages::{
+        clubs::{ClubItem, ClubRole},
+        people::{DirectoryItem, FollowerItem},
+    },
     sleep_ms,
     types::{
         ActorInfo, ConnectionItem, ConnectionsResult, ExerciseStats, FeedItem, FollowingItem,
@@ -349,6 +352,60 @@ pub fn mock_clubs() -> Vec<FollowingItem> {
             display_name: Some("Open Water Swimmers".to_string()),
             avatar_url: None,
             accepted: true,
+        },
+    ]
+}
+
+pub fn mock_server_clubs() -> Vec<ClubItem> {
+    vec![
+        ClubItem {
+            handle: "sfcycling".to_string(),
+            ap_id: "https://jogga.fit/clubs/sfcycling".to_string(),
+            display_name: Some("SF Cycling Club".to_string()),
+            description: Some(
+                "Road and gravel rides in and around the Bay Area. Weekly group rides every Saturday at 7am from Ferry Building.".to_string(),
+            ),
+            exclusive: false,
+            member_count: 47,
+            my_role: ClubRole::Member,
+        },
+        ClubItem {
+            handle: "bmarathon".to_string(),
+            ap_id: "https://jogga.fit/clubs/bmarathon".to_string(),
+            display_name: Some("Berlin Marathon Pacers".to_string()),
+            description: Some(
+                "Training group for Berlin Marathon. Structured plans, weekly long runs, and pacing support.".to_string(),
+            ),
+            exclusive: true,
+            member_count: 18,
+            my_role: ClubRole::NotMember,
+        },
+        ClubItem {
+            handle: "openwaterswim".to_string(),
+            ap_id: "https://jogga.fit/clubs/openwaterswim".to_string(),
+            display_name: Some("Open Water Swimmers".to_string()),
+            description: Some("Year-round swims at Aquatic Park and beyond. All levels welcome.".to_string()),
+            exclusive: false,
+            member_count: 89,
+            my_role: ClubRole::Member,
+        },
+        ClubItem {
+            handle: "irontraining".to_string(),
+            ap_id: "https://jogga.fit/clubs/irontraining".to_string(),
+            display_name: Some("Triathlon Training".to_string()),
+            description: None,
+            exclusive: true,
+            member_count: 12,
+            my_role: ClubRole::NotMember,
+        },
+        ClubItem {
+            handle: "trailrunners".to_string(),
+            ap_id: "https://jogga.fit/clubs/trailrunners".to_string(),
+            display_name: Some("Bay Area Trail Runners".to_string()),
+            description: Some("Exploring trails across Marin, Oakland Hills, and the Peninsula. Casual weekend runs.".to_string()),
+            exclusive: false,
+            member_count: 34,
+            my_role: ClubRole::NotMember,
         },
     ]
 }
