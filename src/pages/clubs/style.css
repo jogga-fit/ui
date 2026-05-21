@@ -30,10 +30,6 @@
 }
 
 /* Clubs list page */
-.clubs-header {
-    margin-bottom: 28px;
-}
-
 .clubs-header-row {
     display: flex;
     align-items: baseline;
